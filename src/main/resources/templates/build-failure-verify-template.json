@@ -1,0 +1,84 @@
+
+{ 
+ "developerTasks": 
+  [{
+  		"taskId":"DT-000051918", 
+	   	"builds":
+	   	 [{                  
+	         "commitFileList":
+	          [{
+	               "filePath":"SILO/acspage/OTP_Auth/firstTest.html",
+	               "action":"add",
+	               "md5Value":"bbd636bad4c05715566999fd407b8897"
+	            },
+	            {
+	               "filePath":"SILO/acspage/OTP_Auth/hrtnbase.htm",
+	               "action":"update",
+	               "md5Value":"bbd636bad4c05715566999fd407b8897"
+	            },
+	            {
+	               "filePath":"SILO/acspage/OTP_Auth/test12.html",
+	               "action":"add",
+	               "md5Value":"bbd636bad4c05715566999fd407b8897"
+	            },
+	            {
+	               "filePath":"SILO/acspage/OTP_Auth/test12.html",
+	               "action":"delete",
+	               "md5Value":""
+	          }],
+	         
+	         "buildAssertValues":
+	          {
+		         	"buildStatus":"Build Failed",
+					"expectedToVerify": 
+					 {
+						"artifactUploadStatus":"Upload Failed",
+						"failedReason":""
+					 }
+		       }
+	    }],
+	    
+	   "consolidationPackage":{
+	   	  "doConsolidateCheck":"true",
+	      "doTaskStatusChangeAuto":"true",
+	      "checkReleaseEntryInDB":"true",
+	      "expectedFilesInPackage":
+	       [{
+	            "filePath":"",
+	            "md5Value":"",
+	            "action":""
+	           
+	       }],
+	       "expectedEntriesInManifestXML":
+	     	[{
+	            "filePath":"",
+	            "md5Value":"",
+	            "action":""
+	        }]
+	   }
+   }],
+   
+   
+  "doConsolidateCheck":"true",
+  "consolidationList" : 
+   [{
+	  "taskIds":["DT-000051918"],
+	  "expectedFilesInPackage":
+	   [{
+	        "filePath":"",
+	        "md5Value":"",
+	        "action":"",
+	        "check-manifest":"true"
+	   }],
+	  "expectedEntriesInManifestXML": [
+      {
+        "filePath": "",
+        "md5Value": "",
+        "action": ""
+      }
+    ] 
+   }],
+  "rebase-upstream": "true",
+  "rebase-origin": "true",
+  "resetDB":"true"
+}
