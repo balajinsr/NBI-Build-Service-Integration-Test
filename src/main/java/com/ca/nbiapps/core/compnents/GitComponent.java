@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.apache.axis2.databinding.types.URI;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -12,6 +13,8 @@ import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.RemoteAddCommand;
+import org.eclipse.jgit.api.RemoteRemoveCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.TransportConfigCallback;
@@ -25,6 +28,7 @@ import org.eclipse.jgit.transport.OpenSshConfig.Host;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.Transport;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.util.FS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -92,18 +96,24 @@ public class GitComponent extends CommonComponent {
 		}
 	};
 	
-	public void addUpstream(Logger logger) throws Exception {
+	public boolean addUpstream(Logger logger) throws Exception {
 		try (Git git = getGit(logger)) {
-			StoredConfig config = git.getRepository().getConfig();
-			config.setString("remote", "origin", "url", "http://github.com/user/repo");
-			config.save();
-			
-			/*
-			 *  RemoteAddCommand remoteAddCommand = git.remoteAdd();
-			    remoteAddCommand.setName("origin");
-			    remoteAddCommand.setUri(new URIish("http://github.com/user/repo"));
-			    remoteAddCommand.call();
-			 */
+			RemoteAddCommand remoteAddCommand = git.remoteAdd();
+		    remoteAddCommand.setName("upstream");
+		    remoteAddCommand.setUri(new URIish("https://github-isl-test-01.ca.com/bossa02/NBI-Applications-SECUREDEMO"));
+		    remoteAddCommand.call(); 
+			return true;
+		} catch(Exception e) {
+			throw e;
+		}
+	}
+	
+	public boolean removeUpstream(Logger logger) throws Exception {
+		try (Git git = getGit(logger)) {
+			RemoteRemoveCommand remoteRemoveCommand = git.remoteRemove();
+			remoteRemoveCommand.setName("upstream");
+			remoteRemoveCommand.call(); 
+			return true;
 		} catch(Exception e) {
 			throw e;
 		}
@@ -249,7 +259,7 @@ public class GitComponent extends CommonComponent {
 		return false;
 	}
 
-	public void cloneRepo(Logger logger) throws Exception {
+	public boolean cloneRepo(Logger logger) throws Exception {
 		try {
 			String forkLoc = getProperty("LOCAL_FORK_REPO_DIR");
 			File forkFile = new File(forkLoc);
@@ -269,9 +279,11 @@ public class GitComponent extends CommonComponent {
 			} else {
 				logger.info("git clone already done!. Skipping");
 			}
+			return true;
 		} catch (Exception e) {
 			logger.error("Error to clone , repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
 		}
+		return false;
 	}
 	
 	private PullRequestEvent getPullRequest(String taskId) throws Exception {

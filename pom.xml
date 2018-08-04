@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ca.nbiapps.build</groupId>
-	<artifactId>nbiAppBuild</artifactId>
+	<artifactId>nbiAppBuild-Integration-Test</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>Build REST Service - Integration Testing</name>
@@ -33,12 +33,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>${velocity.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
@@ -57,8 +51,6 @@
 			<artifactId>gson</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-
-
 
 		<!-- jackson jars -->
 		<dependency>
@@ -91,23 +83,13 @@
 			<version>1.5.0-b01</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.2.11</version>
-		</dependency>
-
-
-
 		<!-- Test cases dependencies start -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${org.springframework-version}</version>
-			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit.junit -->
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit.junit</artifactId>
@@ -123,25 +105,16 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.2</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180130</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.json/json -->
-<dependency>
-    <groupId>org.json</groupId>
-    <artifactId>json</artifactId>
-    <version>20180130</version>
-</dependency>
-		
-
 		<!-- Test cases dependencies end -->
 
 	</dependencies>
 
 	<build>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -153,7 +126,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		
+
 	</build>
 
 </project>
