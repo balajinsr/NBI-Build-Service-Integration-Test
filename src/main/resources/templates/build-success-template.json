@@ -151,8 +151,7 @@
         {
           "filePath": "",
           "md5Value": "",
-          "action": "",
-          "check-manifest": "true"
+          "action": ""
         }
       ],
 	  "expectedEntriesInManifestXML": [

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.IOUtils;
@@ -69,8 +68,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 			String fromPath = fileObj.getString("filePath");
 			String action = fileObj.getString("action");
 			String md5Value = fileObj.getString("md5Value");
-			Path from = Paths.get(Paths.get(srcBasePath+File.separator+fromPath).toString()); 
-			Path to = Paths.get(Paths.get(destBasePath+File.separator+fromPath).toString()); 
+			Path from = gitComponent.getPathByOSSpecific(srcBasePath+File.separator+fromPath); 
+			Path to = gitComponent.getPathByOSSpecific(destBasePath+File.separator+fromPath); 
 			
 			if(action.equalsIgnoreCase("delete")) {
 				Files.delete(to);

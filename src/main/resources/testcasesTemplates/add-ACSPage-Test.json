@@ -64,9 +64,16 @@
         {
           "filePath": "",
           "md5Value": "",
-          "action": "",
-          "check-manifest": "true"
+          "action": ""
         }
+      ],
+      
+      "expectedEntriesInManifestXML": [
+      {
+        "filePath": "",
+        "md5Value": "",
+        "action": ""
+      }
       ]
     }
   ],

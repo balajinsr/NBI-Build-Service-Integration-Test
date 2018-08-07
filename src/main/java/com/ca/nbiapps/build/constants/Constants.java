@@ -6,7 +6,7 @@ package com.ca.nbiapps.build.constants;
  *
  */
 public enum Constants {
-	ASYN_LOGGER_PROP("asyn-logger.properties");
+	BUILD_SERVICE_CLIENT_LOGGER_PROPS("build-service-client-logger.properties");
 
 	private String fileName;
 

@@ -1,6 +1,8 @@
 package com.ca.nbiapps.core.compnents;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -26,6 +28,10 @@ public class CommonComponent {
 			return null;
 		}
 	}
+	
+	public Path getPathByOSSpecific(String absoluteFilePath) {
+		return Paths.get(Paths.get(absoluteFilePath).toString()); 
+	}
 
 	private Logger getDefaultLogger() throws Exception {
 		return getLogger("Default-TestNG", "INFO");
@@ -34,7 +40,7 @@ public class CommonComponent {
 	public CommonComponent() {
 		String logFileLocation = null;
 		try {
-			logFileLocation = PropertyUtils.getValueFromProperties("LOG_LOCATION_PATH", Constants.ASYN_LOGGER_PROP.getFileName());
+			logFileLocation = PropertyUtils.getValueFromProperties("LOG_LOCATION_PATH", Constants.BUILD_SERVICE_CLIENT_LOGGER_PROPS.getFileName());
 			if (logFileLocation == null) {
 				logFileLocation = "@CATALINA_HOME@/buildlogs";
 			}
@@ -84,7 +90,7 @@ public class CommonComponent {
 	public String getLoggerPath(String siloName) throws IOException {
 		String logFileLocation = null;
 		try {
-			logFileLocation = PropertyUtils.getValueFromProperties("LOG_LOCATION_PATH", Constants.ASYN_LOGGER_PROP.getFileName());
+			logFileLocation = PropertyUtils.getValueFromProperties("LOG_LOCATION_PATH", Constants.BUILD_SERVICE_CLIENT_LOGGER_PROPS.getFileName());
 			if (logFileLocation == null) {
 				logFileLocation = "@CATALINA_HOME@/buildlogs";
 			}
