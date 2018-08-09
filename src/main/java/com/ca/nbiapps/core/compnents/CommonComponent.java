@@ -1,46 +1,30 @@
 package com.ca.nbiapps.core.compnents;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ca.nbiapps.build.constants.Constants;
-import com.ca.nbiapps.build.util.PropertyUtils;
 import com.ca.nbiapps.common.logger.AsynchLogger;
 import com.ca.nbiapps.common.logger.LoggerPool;
 
-/**
- * @author Balaji N
- */
 @Component
-public class CommonComponent {
-	public String getProperty(String key) throws Exception {
-		String propertyFile = "test.properties";
-		try {
-			return PropertyUtils.getValueFromProperties(key, propertyFile);
-		} catch (Exception e) {
-			Logger logger = getDefaultLogger();
-			logger.error("Property - [" + key + "] read failed from file - [" + propertyFile + "]");
-			return null;
-		}
-	}
+public class CommonComponent  {
+	
+	@Autowired
+	public PropertyComponents propertyComponents;
 	
 	public Path getPathByOSSpecific(String absoluteFilePath) {
 		return Paths.get(Paths.get(absoluteFilePath).toString()); 
 	}
 
-	private Logger getDefaultLogger() throws Exception {
-		return getLogger("Default-TestNG", "INFO");
-	}
-
 	public CommonComponent() {
 		String logFileLocation = null;
 		try {
-			logFileLocation = PropertyUtils.getValueFromProperties("LOG_LOCATION_PATH", Constants.BUILD_SERVICE_CLIENT_LOGGER_PROPS.getFileName());
+			logFileLocation = propertyComponents.getLogLocationPath();
 			if (logFileLocation == null) {
 				logFileLocation = "@CATALINA_HOME@/buildlogs";
 			}
@@ -87,10 +71,8 @@ public class CommonComponent {
 		}
 	}
 
-	public String getLoggerPath(String siloName) throws IOException {
-		String logFileLocation = null;
-		try {
-			logFileLocation = PropertyUtils.getValueFromProperties("LOG_LOCATION_PATH", Constants.BUILD_SERVICE_CLIENT_LOGGER_PROPS.getFileName());
+	public String getLoggerPath(String siloName) throws Exception {
+		String logFileLocation = propertyComponents.getLogLocationPath();
 			if (logFileLocation == null) {
 				logFileLocation = "@CATALINA_HOME@/buildlogs";
 			}
@@ -100,9 +82,7 @@ public class CommonComponent {
 			} else {
 				logFileLocation = logFileLocation.replace("@CATALINA_HOME@", "/opt/arcot");
 			}
-		} catch (IOException e) {
-			throw e;
-		}
+		
 		if (!"".equalsIgnoreCase(siloName)) {
 			logFileLocation = logFileLocation + "/" + siloName;
 		}

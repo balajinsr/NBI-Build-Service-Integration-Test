@@ -1,9 +1,14 @@
 package com.ca.nbiapps.core.compnents;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.InvalidParameterException;
 import java.util.List;
+
+import javax.activity.InvalidActivityException;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
@@ -28,6 +33,8 @@ import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.Transport;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.util.FS;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -49,15 +56,14 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 /**
- * @author Balaji N
+ *  @author Balaji N
  */
 @Component
 public class GitComponent extends CommonComponent {
-	
+
 	@Autowired
 	RestServiceClient restServiceClient;
-	
-	
+
 	public SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
 		@Override
 		protected void configure(Host arg0, Session session) {
@@ -93,60 +99,57 @@ public class GitComponent extends CommonComponent {
 			return defaultJSch;
 		}
 	};
-	
-	public boolean addUpstream(Logger logger) throws Exception {
-		try (Git git = getGit(logger)) {
+
+	public boolean addUpstream() throws Exception {
+		String upstreamGitUrl = propertyComponents.getGitUpstreamSshUrl();
+		try (Git git = getGit()) {
 			RemoteAddCommand remoteAddCommand = git.remoteAdd();
-		    remoteAddCommand.setName("upstream");
-		    remoteAddCommand.setUri(new URIish("https://github-isl-test-01.ca.com/bossa02/NBI-Applications-SECUREDEMO"));
-		    remoteAddCommand.call(); 
+			remoteAddCommand.setName("upstream");
+			remoteAddCommand.setUri(new URIish(upstreamGitUrl));
+			remoteAddCommand.call();
 			return true;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
-	public boolean removeUpstream(Logger logger) throws Exception {
-		try (Git git = getGit(logger)) {
+
+	public boolean removeUpstream() throws Exception {
+		try (Git git = getGit()) {
 			RemoteRemoveCommand remoteRemoveCommand = git.remoteRemove();
 			remoteRemoveCommand.setName("upstream");
-			remoteRemoveCommand.call(); 
+			remoteRemoveCommand.call();
 			return true;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
-	public Git getGit(Logger logger) throws Exception {
-		String localRepoDir = getProperty("LOCAL_FORK_REPO_DIR");
+
+	private Git getGit() throws Exception {
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
 		if (localRepoDir != null) {
 			return Git.open(new File(localRepoDir));
 		}
-		return null;	
+		throw new InvalidParameterException("Git fork location property [LOCAL_FORK_REPO_DIR] value is invalid!");
 	}
 
 	public boolean doCloneAndPull(Logger logger) throws Exception {
-		try {
-			String localRepoDir = getProperty("LOCAL_FORK_REPO_DIR");
-			if (localRepoDir != null) {
-				File repoLocalDir = new File(localRepoDir);
-				if (!repoLocalDir.exists()) {
-					cloneRepo(logger);
-				} else {
-					gitPull(logger);
-				}
-				return true;
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
+		if (localRepoDir != null) {
+			File repoLocalDir = new File(localRepoDir);
+			if (!repoLocalDir.exists()) {
+				cloneRepo(logger);
 			} else {
-				logger.error("LOCAL_FORK_REPO_DIR is null");
+				gitPull(logger);
 			}
-		} catch (Exception e) {
-			logger.error("Error to CloneAndPull - repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
+			return true;
+		} else {
+			logger.error("LOCAL_FORK_REPO_DIR is null");
 		}
 		return false;
 	}
 
 	private void gitPull(Logger logger) throws Exception {
-		String localRepoDir = getProperty("LOCAL_FORK_REPO_DIR");
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
 		if (localRepoDir != null) {
 			try (Git git = Git.open(new File(localRepoDir))) {
 				PullCommand pullCommand = git.pull();
@@ -161,38 +164,55 @@ public class GitComponent extends CommonComponent {
 				logger.info("git pull is " + (pullResult.isSuccessful() ? "Success" : "Failed"));
 				logger.info("MergeStatus: " + pullResult.getMergeResult().getMergeStatus().toString());
 				logger.info("FetchResult: " + pullResult.getFetchResult().getMessages());
-			} catch (Exception e) {
-				logger.error("Error to pull, repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
 			}
 		} else {
 			logger.error("LOCAL_FORK_REPO_DIR is null");
 		}
 	}
-	
-	
-	public void reset(Git git, String commitId) throws Exception {
-		ResetCommand resetCommand = git.reset();
-		resetCommand.setRef(commitId);
-		resetCommand.setMode(ResetType.HARD);
-		resetCommand.call();
-		
+
+	public boolean gitResetHard(Logger logger, String commitId) throws Exception {
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
+		if (localRepoDir != null) {
+			try (Git git = Git.open(new File(localRepoDir))) {
+				ResetCommand resetCommand = git.reset();
+				resetCommand.setRef(commitId);
+				resetCommand.setMode(ResetType.HARD);
+				resetCommand.call();
+				return true;
+			} 
+		}
+		return false;
 	}
 
-	public void gitCommit(Git git, String commentMessage) throws Exception {
-		git.commit().setMessage(commentMessage).call();
+	public void gitCommit(String commentMessage) throws Exception {
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
+		if (localRepoDir != null) {
+			try (Git git = Git.open(new File(localRepoDir))) {
+				git.commit().setMessage(commentMessage).call();
+			}
+		}
 	}
-	
-	public void gitRemove(Git git, String filepattern) throws Exception {	
-		git.rm().addFilepattern(filepattern).call();
+
+	public void gitRemove(String filepattern) throws Exception {
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
+		if (localRepoDir != null) {
+			try (Git git = Git.open(new File(localRepoDir))) {
+				git.rm().addFilepattern(filepattern).call();
+			}
+		}
 	}
-	
-	public void gitAdd(Git git, String filePattern) throws Exception {
-		git.add().addFilepattern(filePattern).call();
+
+	public void gitAdd(String filePattern) throws Exception {
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
+		if (localRepoDir != null) {
+			try (Git git = Git.open(new File(localRepoDir))) {
+				git.add().addFilepattern(filePattern).call();
+			}
+		}
 	}
-	
-	
-	public String getLastestCommitId(Logger logger) throws Exception {
-		try (Git git = getGit(logger); RevWalk walk = new RevWalk(git.getRepository())) {
+
+	public String getLastestCommitId() throws Exception {
+		try (Git git = getGit(); RevWalk walk = new RevWalk(git.getRepository())) {
 			List<Ref> branches = git.branchList().setListMode(ListMode.ALL).call();
 
 			for (Ref branch : branches) {
@@ -200,70 +220,37 @@ public class GitComponent extends CommonComponent {
 				return ObjectId.toString(commit.getId());
 			}
 		}
-		return null;
-	}
-	
-	
-	public void gitPush(Git git, boolean isForce) throws Exception {
-		PushCommand pushCommand = git.push();
-		pushCommand.setRemote("origin");
-		pushCommand.setForce(isForce);
-		pushCommand.setTransportConfigCallback(new TransportConfigCallback() {
-			@Override
-			public void configure(Transport transport) {
-				SshTransport sshTransport = (SshTransport) transport;
-				sshTransport.setSshSessionFactory(sshSessionFactory);
-			}
-		});
-		pushCommand.call();
+		throw new InvalidActivityException("Unable to get the latest commit id value.!");
 	}
 
-	public boolean addNewFile(Logger logger, String absoluteFilePath, String fileData) throws Exception {
-		File file = new File(absoluteFilePath);
-		if (!file.exists()) {
-			try (FileWriter fw = new FileWriter(absoluteFilePath)) {
-				fw.append(fileData);
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("Error to pull, repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
-			}
+	public void gitPush(Logger logger, boolean isForce, String remoteName) throws Exception {
+		String localRepoDir = propertyComponents.getLocalForkReopDir();
+		if (localRepoDir != null) {
+			try (Git git = Git.open(new File(localRepoDir))) {
+				PushCommand pushCommand = git.push();
+				pushCommand.setRemote(remoteName);
+				if (isForce) {
+					pushCommand.setForce(isForce);
+				}
+				pushCommand.setTransportConfigCallback(new TransportConfigCallback() {
+					@Override
+					public void configure(Transport transport) {
+						SshTransport sshTransport = (SshTransport) transport;
+						sshTransport.setSshSessionFactory(sshSessionFactory);
+					}
+				});
+				pushCommand.call();
+			} 
 		}
-		return false;
-	}
-
-	public boolean modifyFile(Logger logger, String absoluteFilePath, String fileData) throws Exception {
-		File file = new File(absoluteFilePath);
-		if (file.exists()) {
-			try (FileWriter fw = new FileWriter(absoluteFilePath, true)) {
-				fw.append(fileData);
-				return true;
-			} catch (Exception e) {
-				logger.error("Error in  modifyExistingFile - repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
-			}
-		}
-		return false;
-	}
-
-	public boolean deleteFile(Logger logger, String absoluteFilePath) throws Exception {
-		try {
-			File file = new File(absoluteFilePath);
-			if (file.exists()) {
-				return file.delete();
-			}
-		} catch (Exception e) {
-			logger.error("Error in  modifyExistingFile - repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
-		}
-		return false;
 	}
 
 	public boolean cloneRepo(Logger logger) throws Exception {
 		try {
-			String forkLoc = getProperty("LOCAL_FORK_REPO_DIR");
+			String forkLoc = propertyComponents.getLocalForkReopDir();
 			File forkFile = new File(forkLoc);
-			if(!forkFile.exists()) {
+			if (!forkFile.exists()) {
 				CloneCommand cloneCommand = Git.cloneRepository();
-				cloneCommand.setURI(getProperty("GIT_SSH_LOCATION"));
+				cloneCommand.setURI(propertyComponents.getGitForkSshUrl());
 				cloneCommand.setDirectory(forkFile);
 				cloneCommand.setTransportConfigCallback(new TransportConfigCallback() {
 					@Override
@@ -279,11 +266,11 @@ public class GitComponent extends CommonComponent {
 			}
 			return true;
 		} catch (Exception e) {
-			logger.error("Error to clone , repo location -[" + getProperty("GIT_SSH_LOCATION") + "] " + e, e);
+			logger.error("Error to clone , repo location -[" + propertyComponents.getGitForkSshUrl() + "] " + e, e);
 		}
 		return false;
 	}
-	
+
 	private PullRequestEvent getPullRequest(String taskId) throws Exception {
 		PullRequestEvent pullReqEvent = new PullRequestEvent();
 		pullReqEvent.setAction("opened");
@@ -293,21 +280,21 @@ public class GitComponent extends CommonComponent {
 
 		Head head = new Head();
 		head.setRef("master");
-		head.setSha("41ef712cedae8e2454f3b786c74c8f431d26b33f");
+		head.setSha(getLastestCommitId());
 
 		User user = new User();
-		user.setLogin(getProperty("GIT_USERNAME"));
+		user.setLogin(propertyComponents.getGitUserName());
 
 		Repo repo = new Repo();
 		repo.setFork(true);
-		repo.setName(getProperty("SILO_NAME"));
-		repo.setSsh_url(getProperty("GIT_SSH_LOCATION"));
+		repo.setName(propertyComponents.getSiloName());
+		repo.setSsh_url(propertyComponents.getGitForkSshUrl());
 
 		head.setUser(user);
 		head.setRepo(repo);
 
 		Base base = new Base();
-		base.setSha("d8f1a924267a85008bf4460ddb22824f3b07befa");
+		base.setSha(propertyComponents.getGitCommitSshId());
 		base.setRepo(repo);
 
 		pullReq.setBase(base);
@@ -316,26 +303,27 @@ public class GitComponent extends CommonComponent {
 		pullReqEvent.setPull_request(pullReq);
 		return pullReqEvent;
 	}
-	
+
 	private String toJsonFromObject(Object object, Type returnTypeOfObject) {
 		Gson gson = new GsonBuilder().create();
-		return gson.toJson(object, returnTypeOfObject);	
+		return gson.toJson(object, returnTypeOfObject);
 	}
-	
-	public void pullRequest(Logger logger, String taskId) throws Exception {
+
+	private void pullRequest(TestCaseContext testCaseContext, String taskId) throws Exception {
+		Logger logger = testCaseContext.getLogger();
 		try {
-			logger = getLogger("UnitTestCase", "INFO");
 			PullRequestEvent pullReqEvent = getPullRequest(taskId);
-			String url = getProperty("PULL_REQUEST_URL");
 			HttpHeaders requestHeaders = restServiceClient.createHttpHeader("*/*", "UTF-8", "application/json");
 			requestHeaders.add("X-GitHub-Event", "pull_request");
-			
+
 			if (taskId != null) {
-				Type returnTypeOfObject = new TypeToken<PullRequestEvent>() {}.getType();
+				Type returnTypeOfObject = new TypeToken<PullRequestEvent>() {
+				}.getType();
 				String payLoad = toJsonFromObject(pullReqEvent, returnTypeOfObject);
 				System.out.println("PayLoad:" + payLoad);
-				Type returnTypeOfBaseResponse = new TypeToken<BaseResponse>() {}.getType();
-				BaseResponse baseRes = (BaseResponse)restServiceClient.postRestAPICall(logger, url, requestHeaders, payLoad, ResponseModel.class, returnTypeOfBaseResponse);
+				Type returnTypeOfBaseResponse = new TypeToken<BaseResponse>() {
+				}.getType();
+				BaseResponse baseRes = (BaseResponse) restServiceClient.postRestAPICall(logger, propertyComponents.getPullRequestServiceUrl(), requestHeaders, payLoad, ResponseModel.class, returnTypeOfBaseResponse);
 				System.out.println(baseRes.toString());
 			} else {
 				// TODO: send an email
@@ -345,6 +333,53 @@ public class GitComponent extends CommonComponent {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	public void processDeveloperGitTask(TestCaseContext testCaseContext) throws Exception {
+		Logger logger = testCaseContext.getLogger();
+		JSONArray buildTasks = testCaseContext.getTestCaseData().getJSONArray("buildtasks");
+		for (int i = 0; i < buildTasks.length(); i++) {
+			JSONObject buildTask = buildTasks.getJSONObject(i);
+			String taskId = buildTask.getString("taskId");
+			if (changeFiles(logger, buildTask)) {
+				gitCommit(taskId);
+				gitPush(logger, false, "origin");
+				pullRequest(testCaseContext, taskId);
+			}
+		}
+	}
+
+	public boolean changeFiles(Logger logger, JSONObject buildTask) throws Exception {
+		JSONArray commitFileList = buildTask.getJSONArray("commitFileList");
+		String srcBasePath = propertyComponents.getTestDataBasePath();
+		String destBasePath = propertyComponents.getLocalForkReopDir();
+		boolean changeFileStatus = true;
+		for (int j = 0; j < commitFileList.length(); j++) {
+			JSONObject fileObj = commitFileList.getJSONObject(j);
+			String fromPath = fileObj.getString("filePath");
+			String action = fileObj.getString("action");
+			String md5Value = fileObj.getString("md5Value");
+			Path from = getPathByOSSpecific(srcBasePath + File.separator + fromPath);
+			Path to = getPathByOSSpecific(destBasePath + File.separator + fromPath);
+
+			if (action.equalsIgnoreCase("delete")) {
+				Files.delete(to);
+				gitRemove(fromPath);
+			} else {
+				Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
+				changeFileStatus = checkMd5(md5Value, to);
+				if (!changeFileStatus) {
+					break;
+				}
+				gitAdd(fromPath);
+			}
+
+		}
+		return true;
+	}
+
+	private boolean checkMd5(String md5Value, Path to) {
+		return "bbd636bad4c05715566999fd407b8897".equals(md5Value);
 	}
 
 }

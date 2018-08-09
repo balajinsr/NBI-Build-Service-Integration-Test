@@ -86,17 +86,20 @@ public class ArtifactoryComponent extends CommonComponent {
 	        }
         }
         return true;
+		
     }
    
-    private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+    private boolean extractFile(ZipInputStream zipIn, String filePath) throws IOException {
     	int BUFFER_SIZE = 4096;
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-        byte[] bytesIn = new byte[BUFFER_SIZE];
-        int read = 0;
-        while ((read = zipIn.read(bytesIn)) != -1) {
-            bos.write(bytesIn, 0, read);
+    	
+        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath))) {
+	        byte[] bytesIn = new byte[BUFFER_SIZE];
+	        int read = 0;
+	        while ((read = zipIn.read(bytesIn)) != -1) {
+	            bos.write(bytesIn, 0, read);
+	        }
         }
-        bos.close();
+        return true;
     }
     
     @Deprecated
