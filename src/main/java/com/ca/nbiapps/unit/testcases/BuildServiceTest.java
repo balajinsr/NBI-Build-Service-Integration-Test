@@ -101,8 +101,8 @@ public class BuildServiceTest extends BaseTest {
 		Logger logger  = null;
 		try {
 			logger = gitComponent.getLogger(UNIT_TEST_LOG_FILENAME, "INFO");
-			gitComponent.gitPush(logger, false, "origin");
-			gitComponent.gitPush(logger, false, "upstream");
+			gitComponent.gitPush(logger, true, "origin");
+			gitComponent.gitPush(logger, true, "upstream");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -163,6 +163,14 @@
     ]
     }
   ],
+  "promoteToValFac":{
+  	  "promotedApproval": "true",
+      "adjustTaskIdStatus":"auto"
+   },
+   "promoteToProduction":{
+      "promotedApproval": "true",
+      "adjustTaskIdStatus":"auto"
+   },
   "rebase-upstream": "true",
   "rebase-origin": "true",
   "resetDB": "true"

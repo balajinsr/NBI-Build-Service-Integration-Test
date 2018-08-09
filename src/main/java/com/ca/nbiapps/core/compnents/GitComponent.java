@@ -26,6 +26,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.transport.HttpTransport;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig.Host;
 import org.eclipse.jgit.transport.SshSessionFactory;
@@ -101,6 +102,19 @@ public class GitComponent extends CommonComponent {
 	};
 
 	public boolean addUpstream() throws Exception {
+		String upstreamGitUrl = propertyComponents.getGitUpstreamSshUrl();
+		try (Git git = getGit()) {
+			RemoteAddCommand remoteAddCommand = git.remoteAdd();
+			remoteAddCommand.setName("upstream");
+			remoteAddCommand.setUri(new URIish(upstreamGitUrl));
+			remoteAddCommand.call();
+			return true;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public boolean addOrigin() throws Exception {
 		String upstreamGitUrl = propertyComponents.getGitUpstreamSshUrl();
 		try (Git git = getGit()) {
 			RemoteAddCommand remoteAddCommand = git.remoteAdd();
@@ -233,12 +247,17 @@ public class GitComponent extends CommonComponent {
 					pushCommand.setForce(isForce);
 				}
 				pushCommand.setTransportConfigCallback(new TransportConfigCallback() {
-					@Override
-					public void configure(Transport transport) {
-						SshTransport sshTransport = (SshTransport) transport;
-						sshTransport.setSshSessionFactory(sshSessionFactory);
-					}
-				});
+					  @Override
+					  public void configure(Transport transport) {
+					    if( transport instanceof SshTransport ) {
+					      SshTransport sshTransport = (SshTransport) transport;
+					      sshTransport.setSshSessionFactory( sshSessionFactory );
+					    } else if( transport instanceof HttpTransport ) {
+					      // configure HTTP protocol specifics
+					    }
+					  }
+					} );
+				
 				pushCommand.call();
 			} 
 		}
