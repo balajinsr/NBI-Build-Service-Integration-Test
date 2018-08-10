@@ -42,6 +42,7 @@
 	   	  "doConsolidateCheck":"true",
 	      "doTaskStatusChangeAuto":"true",
 	      "checkReleaseEntryInDB":"true",
+	      "isAtLeastOneBuildSuccess":"true",
 	      "expectedFilesInPackage":
 	       [{
 	            "filePath":"",
@@ -63,6 +64,7 @@
   "consolidationList" : 
    [{
 	  "taskIds":["DT-000051918"],
+	  "isAtLeastOneBuildSuccess":"true",
 	  "expectedFilesInPackage":
 	   [{
 	        "filePath":"",
@@ -78,6 +80,14 @@
       }
     ] 
    }],
+  "promoteToValFac":{
+  	  "promotedApproval": "true",
+      "adjustTaskIdStatus":"auto"
+   },
+   "promoteToProduction":{
+      "promotedApproval": "true",
+      "adjustTaskIdStatus":"auto"
+   },
   "rebase-upstream": "true",
   "rebase-origin": "true",
   "resetDB":"true"

@@ -102,6 +102,7 @@
             "buildStatus": "Build Success",
             "expectedToVerify": {
               "artifactUploadStatus": "Upload Success",
+              "isArtifactsAvailable" : "true",
               "expectedFilesInPackage": [
                 {
                   "filePath": "",
@@ -123,6 +124,7 @@
       "consolidationPackage": {
         "doConsolidateCheck": "true",
         "doTaskStatusChangeAuto": "true",
+        "isAtLeastOneBuildSuccess":"true",
         "checkReleaseEntryInDB": "true",
         "expectedFilesInPackage": [
           {
@@ -147,6 +149,7 @@
       "taskIds": [
         "DT-000051918"
       ],
+      "isAtLeastOneBuildSuccess":"true",
       "expectedFilesInPackage": [
         {
           "filePath": "",

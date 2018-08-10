@@ -15,6 +15,7 @@
             "buildStatus": "Build Success",
             "expectedToVerify": {
               "artifactUploadStatus": "Upload Success",
+              "isArtifactsAvailable" : "true",
               "expectedFilesInPackage": [
                 {
                   "filePath": "",
@@ -60,6 +61,7 @@
       "taskIds": [
         "DT-000051918"
       ],
+      "isAtLeastOneBuildSuccess":"true",
       "expectedFilesInPackage": [
         {
           "filePath": "",
@@ -77,6 +79,14 @@
       ]
     }
   ],
+  "promoteToValFac":{
+  	  "promotedApproval": "true",
+      "adjustTaskIdStatus":"auto"
+   },
+   "promoteToProduction":{
+      "promotedApproval": "true",
+      "adjustTaskIdStatus":"auto"
+   },
   "rebase-upstream": "true",
   "rebase-origin": "true",
   "resetDB": "true"
