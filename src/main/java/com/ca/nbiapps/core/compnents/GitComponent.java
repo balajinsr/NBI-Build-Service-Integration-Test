@@ -275,8 +275,10 @@ public class GitComponent extends CommonComponent {
 					}
 				});
 				cloneCommand.call();
+				addUpstream();
 				logger.info("git clone is success");
 			} else {
+				gitClean();
 				logger.info("git clone already done!. Skipping");
 			}
 			return true;
@@ -290,13 +292,14 @@ public class GitComponent extends CommonComponent {
 
 	public boolean processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		boolean isAvailableGitChanges = false;
+		boolean isAvailableGitChanges = false;	
+		boolean isCloneSuccess = cloneRepo(logger)?true:false;
 		
-		if(doGitLocalChanges(testCaseContext, buildTask)) {
+		if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
 			doGitLocalCommit(taskId);
 			gitPush(logger, false, "origin");
 			isAvailableGitChanges = true;
-		}	
+		}
 		return isAvailableGitChanges;
 	}
 

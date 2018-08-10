@@ -111,9 +111,8 @@ public class BuildClientComponent {
 
 	/**
 	 * @param testCaseContext
-	 * @param taskId
 	 */
-	public void doBuildsConsolidation(TestCaseContext testCaseContext, String taskId) {
+	public void waitForBuildComplete(TestCaseContext testCaseContext) {
 		// TODO Auto-generated method stub
 		
 	}

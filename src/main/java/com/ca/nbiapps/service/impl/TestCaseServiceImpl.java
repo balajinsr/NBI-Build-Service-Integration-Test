@@ -27,6 +27,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 	@Autowired
 	ConsolidationComponent consolidationComponent;
 	
+	@Autowired
+	SalesForceComponent salesForceComponent;
 	
 	@Override
 	public void process(TestCaseContext testCaseContext) throws Exception {
@@ -39,32 +41,42 @@ public class TestCaseServiceImpl implements TestCaseService {
 			JSONObject buildObj = developerTasks.getJSONObject(i);
 			String taskId = buildObj.getString("taskId");
 			JSONArray buildTasks = buildObj.getJSONArray("builds");
-			gitComponent.gitClean();
+			
+			salesForceComponent.adjustTaskIdStatusForAcceptTheBuild(testCaseContext);
 			for (int j = 0; j < buildTasks.length(); j++) {
 				JSONObject buildTask = buildTasks.getJSONObject(i);
 				gitComponent.processDeveloperGitTask(testCaseContext, taskId, buildTask);
 				buildClientComponent.pullRequest(testCaseContext, taskId, latestGitCommitSHAId);
+				buildClientComponent.waitForBuildComplete(testCaseContext);
 				buildClientComponent.doBuildAssert(testCaseContext, taskId, buildTask);
-				buildClientComponent.doBuildsConsolidation(testCaseContext, taskId);
 			}
 		}
 
 		// consolidationProcessCheck, consolidationPackageCheck, consolidationDBCheck, consolidationManifestCheck
-		String doConsolidateCheck = testCaseData.getString("doConsolidateCheck");
-		if ("true".equals(doConsolidateCheck)) {
-			JSONArray consolidationList = testCaseData.getJSONArray("consolidationList");
+		boolean doConsolidateCheck = testCaseData.getBoolean("doConsolidationCheck");
+		if (doConsolidateCheck) {
+			JSONArray consolidationList = testCaseData.getJSONArray("consolidationAssertList");
 			for (int i = 0; i < consolidationList.length(); i++) {
 				JSONObject consolidation = consolidationList.getJSONObject(i);
 				JSONArray tasks = consolidation.getJSONArray("taskIds");
 	
-				String isAtLeastOneBuildSuccess = consolidation.getString("isAtLeastOneBuildSuccess");
-				if ("true".equals(isAtLeastOneBuildSuccess)) {
+				boolean atLeastOneBuildContainsPackage = consolidation.getBoolean("atLeastOneBuildContainsPackage");
+				if (atLeastOneBuildContainsPackage) {
+					boolean doTaskStatusChangeAuto = consolidation.getBoolean("doTaskStatusChangeAuto");
+					if(doTaskStatusChangeAuto) {
+						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, tasks);
+					}
 					consolidationComponent.doConsolidationPackage(testCaseContext, tasks);
 					JSONArray expectedFilesInPackage = consolidation.getJSONArray("expectedFilesInPackage");
 					consolidationComponent.verifyConsolidationPackage(testCaseContext, expectedFilesInPackage);
 				}
 			}
+		} else {
+			
 		}
+		
+		
+		
 	}
 }
 

@@ -15,7 +15,7 @@
             "buildStatus": "Build Success",
             "expectedToVerify": {
               "artifactUploadStatus": "Upload Success",
-              "isArtifactsAvailable" : "true",
+              "isArtifactsAvailable" : true,
               "expectedFilesInPackage": [
                 {
                   "filePath": "",
@@ -33,35 +33,18 @@
             }
           }
         }
-      ],
-      "consolidationPackage": {
-        "doConsolidateCheck": "true",
-        "doTaskStatusChangeAuto": "true",
-        "checkReleaseEntryInDB": "true",
-        "expectedFilesInPackage": [
-          {
-            "filePath": "",
-            "md5Value": "",
-            "action": ""
-          }
-        ],
-        "expectedEntriesInManifestXML": [
-          {
-            "filePath": "",
-            "md5Value": "",
-            "action": ""
-          }
-        ]
-      }
+      ]
     }
   ],
-  "doConsolidateCheck": "true",
-  "consolidationList": [
+  "doConsolidationCheck": true,
+  "consolidationAssertList": [
     {
       "taskIds": [
         "DT-000051918"
       ],
-      "isAtLeastOneBuildSuccess":"true",
+      "doTaskStatusChangeAuto": true,
+      "atLeastOneBuildContainsPackage": true,
+      "checkReleaseEntryInDB": true,
       "expectedFilesInPackage": [
         {
           "filePath": "",
@@ -80,14 +63,14 @@
     }
   ],
   "promoteToValFac":{
-  	  "promotedApproval": "true",
-      "adjustTaskIdStatus":"auto"
+  	  "promotedApproval": true,
+      "adjustTaskIdStatusAuto":true
    },
    "promoteToProduction":{
-      "promotedApproval": "true",
-      "adjustTaskIdStatus":"auto"
+      "promotedApproval": true,
+      "adjustTaskIdStatusAuto":true
    },
-  "rebase-upstream": "true",
-  "rebase-origin": "true",
-  "resetDB": "true"
+  "rebase-upstream": true,
+  "rebase-origin": true,
+  "resetDB": true
 }
