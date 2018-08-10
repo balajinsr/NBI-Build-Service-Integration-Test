@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.ITestContext;
 import org.testng.annotations.Test;
 
+import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.core.compnents.CommonComponent;
 import com.ca.nbiapps.core.compnents.PropertyComponents;
-import com.ca.nbiapps.core.compnents.TestCaseContext;
 import com.ca.nbiapps.integration.test.BaseTest;
 
 /**

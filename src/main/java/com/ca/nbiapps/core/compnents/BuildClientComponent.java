@@ -16,6 +16,7 @@ import com.ca.nbiapps.build.model.PullRequest;
 import com.ca.nbiapps.build.model.PullRequestEvent;
 import com.ca.nbiapps.build.model.Repo;
 import com.ca.nbiapps.build.model.ResponseModel;
+import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.build.model.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

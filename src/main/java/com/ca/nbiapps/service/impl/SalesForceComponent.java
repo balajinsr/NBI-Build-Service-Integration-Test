@@ -6,7 +6,7 @@ package com.ca.nbiapps.service.impl;
 import org.json.JSONArray;
 import org.springframework.stereotype.Component;
 
-import com.ca.nbiapps.core.compnents.TestCaseContext;
+import com.ca.nbiapps.build.model.TestCaseContext;
 
 /**
  * @author Balaji N

@@ -3,6 +3,8 @@ package com.ca.nbiapps.core.compnents;
 import org.json.JSONArray;
 import org.springframework.stereotype.Component;
 
+import com.ca.nbiapps.build.model.TestCaseContext;
+
 /**
  * 
  * @author Balaji N

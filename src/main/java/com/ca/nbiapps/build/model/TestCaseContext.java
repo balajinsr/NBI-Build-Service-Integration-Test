@@ -1,4 +1,4 @@
-package com.ca.nbiapps.core.compnents;
+package com.ca.nbiapps.build.model;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;

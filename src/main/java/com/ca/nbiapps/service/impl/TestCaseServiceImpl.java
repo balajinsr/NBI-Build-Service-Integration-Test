@@ -5,10 +5,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.core.compnents.BuildClientComponent;
 import com.ca.nbiapps.core.compnents.ConsolidationComponent;
 import com.ca.nbiapps.core.compnents.GitComponent;
-import com.ca.nbiapps.core.compnents.TestCaseContext;
 import com.ca.nbiapps.service.TestCaseService;
 /**
  * 
