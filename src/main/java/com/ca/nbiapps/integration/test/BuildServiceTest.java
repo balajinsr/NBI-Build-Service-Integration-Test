@@ -20,9 +20,6 @@ public class BuildServiceTest extends BaseTest {
 	TestCaseService testCaseService;
 	
 	@Autowired
-	TestCaseContext testCaseContext;
-	
-	@Autowired
 	CommonComponent commonComponent;
 	
 	@Test
@@ -32,6 +29,8 @@ public class BuildServiceTest extends BaseTest {
 			logger = commonComponent.getLogger("Integration-Test-Log", "INFO");
 			String testCaseName = testContext.getCurrentXmlTest().getName();
 			JSONObject jsonTemplateObject = getJSONObject(logger, "testcasesTemplates/"+testCaseName+".json");
+			
+			TestCaseContext testCaseContext = new TestCaseContext();
 			testCaseContext.setTestCaseData(jsonTemplateObject);
 			testCaseContext.setTestCaseName(testCaseName);
 			testCaseContext.setLogger(logger);

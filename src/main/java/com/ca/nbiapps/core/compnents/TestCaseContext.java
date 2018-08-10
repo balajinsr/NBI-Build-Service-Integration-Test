@@ -2,16 +2,12 @@ package com.ca.nbiapps.core.compnents;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
 /**
  * 
  * @author Balaji N
  *
  */
-@Component
-@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "prototype")
+
 public class TestCaseContext {
 	private Logger logger;
 	private JSONObject testCaseData;

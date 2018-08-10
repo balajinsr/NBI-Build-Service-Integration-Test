@@ -291,6 +291,7 @@ public class GitComponent extends CommonComponent {
 	public boolean processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		boolean isAvailableGitChanges = false;
+		
 		if(doGitLocalChanges(testCaseContext, buildTask)) {
 			doGitLocalCommit(taskId);
 			gitPush(logger, false, "origin");
