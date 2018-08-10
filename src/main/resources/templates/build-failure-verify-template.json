@@ -69,7 +69,8 @@
       "promotedApproval": true,
       "adjustTaskIdStatusAuto":true
    },
-  "rebase-upstream": true,
-  "rebase-origin": true,
-  "resetDB": true
+   "rebase-origin": true,
+   "resetDB": true,
+   "rebase-upstream": true
+  
 }
