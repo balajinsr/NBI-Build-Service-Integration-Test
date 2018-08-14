@@ -56,6 +56,13 @@ public class PropertyComponents {
 
 	@Value("${integration.test.artifacts_downloaded_local_dir}")
 	public String artifactoryDownloadLocalDir;
+	
+	@Value("${integration.test.artifactory_username}")
+	public String artifactoryUsername;
+	
+	@Value("${integration.test.artifactory_password}")
+	public String artifactoryPassword;
+	
 	// artifactory properties - end
 
 	public String getSiloName() {
@@ -164,4 +171,19 @@ public class PropertyComponents {
 		this.artifactoryDownloadLocalDir = artifactoryDownloadLocalDir;
 	}
 
+	public String getArtifactoryUsername() {
+		return artifactoryUsername;
+	}
+
+	public void setArtifactoryUsername(String artifactoryUsername) {
+		this.artifactoryUsername = artifactoryUsername;
+	}
+
+	public String getArtifactoryPassword() {
+		return artifactoryPassword;
+	}
+
+	public void setArtifactoryPassword(String artifactoryPassword) {
+		this.artifactoryPassword = artifactoryPassword;
+	}
 }

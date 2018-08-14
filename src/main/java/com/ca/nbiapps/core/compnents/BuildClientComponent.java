@@ -36,6 +36,8 @@ public class BuildClientComponent {
 	@Autowired
 	RestServiceClient restServiceClient;
 	
+	@Autowired
+	CommonComponent commonComponent;
 	
 	private PullRequestEvent getPullRequest(TestCaseContext testCaseContext, String taskId) throws Exception {
 		PullRequestEvent pullReqEvent = new PullRequestEvent();
@@ -70,10 +72,7 @@ public class BuildClientComponent {
 		return pullReqEvent;
 	}
 
-	private String toJsonFromObject(Object object, Type returnTypeOfObject) {
-		Gson gson = new GsonBuilder().create();
-		return gson.toJson(object, returnTypeOfObject);
-	}
+	
 
 	public void pullRequest(TestCaseContext testCaseContext, String taskId) throws Exception {
 		Logger logger = testCaseContext.getLogger();
@@ -86,7 +85,7 @@ public class BuildClientComponent {
 			if (taskId != null) {
 				Type returnTypeOfObject = new TypeToken<PullRequestEvent>() {
 				}.getType();
-				String payLoad = toJsonFromObject(pullReqEvent, returnTypeOfObject);
+				String payLoad = commonComponent.toJsonFromObject(pullReqEvent, returnTypeOfObject);
 				System.out.println("PayLoad:" + payLoad);
 				Type returnTypeOfBaseResponse = new TypeToken<BaseResponse>() {
 				}.getType();
@@ -119,17 +118,20 @@ public class BuildClientComponent {
 			
 			if(!buildSuccess.equals(actualBuildData.getBuildStatus())) {
 				testCaseContext.setTestCaseSuccess(false);
+				testCaseContext.setTestCaseFailureReason("Expected build status: "+buildSuccess+", Actual Build Status: "+actualBuildData.getBuildStatus());
 				return;
 			}
 			
 			if(!artifactUploadStatus.equals(actualBuildData.getArtifactUploadStatus())) {
 				testCaseContext.setTestCaseSuccess(false);
+				testCaseContext.setTestCaseFailureReason("Expected upload artifacts status: "+artifactUploadStatus+", Actual upload artifacts Status: "+actualBuildData.getArtifactUploadStatus());
 				return;
 			}
 			logger.info("BuildResults: :: "+actualBuildData.toString());
 			testCaseContext.setTestCaseSuccess(true);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
+			testCaseContext.setTestCaseFailureReason("Expected artifacts ="+expectedArtifactsAvailable+"actually artifacts - "+actualBuildData.isArtifactsAvailable());
 		}
 	}
 
@@ -144,7 +146,7 @@ public class BuildClientComponent {
 		Logger logger = testCaseContext.getLogger();
 		while(attempts <= 3) {
 			try {
-				Thread.sleep(5000L);
+				Thread.sleep(15000L);
 				previousBuildNumber = previousBuildNumber == null?992:previousBuildNumber;
 				String url = propertyComponents.getBuildServiceBaseUrl()+"/test/getBuildResults?siloName="+propertyComponents.getSiloName()+"&buildNumber="+(previousBuildNumber+1)+"&taskId="+taskId;
 				Type returnTypeOfObject = new TypeToken<ResponseModel>() {

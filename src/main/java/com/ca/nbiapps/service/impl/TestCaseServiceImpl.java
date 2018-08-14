@@ -95,12 +95,23 @@ public class TestCaseServiceImpl implements TestCaseService {
 				boolean atLeastOneBuildContainsPackage = consolidation.getBoolean("atLeastOneBuildContainsPackage");
 				if (atLeastOneBuildContainsPackage) {
 					boolean doTaskStatusChangeAuto = consolidation.getBoolean("doTaskStatusChangeAuto");
+					String taskIds = consolidationComponent.getConsolidatedTaskIds(tasks);
 					if (doTaskStatusChangeAuto) {
-						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, tasks);
+						
+						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, taskIds);
+						if(!testCaseContext.isTestCaseSuccess()) {
+							return;
+						}
 					}
-					consolidationComponent.doConsolidationPackage(testCaseContext, tasks);
+					String releaseId = consolidationComponent.doConsolidationPackage(testCaseContext, "Preview", taskIds);
+					if(!testCaseContext.isTestCaseSuccess()) {
+						return;
+					}
 					JSONArray expectedFilesInPackage = consolidation.getJSONArray("expectedFilesInPackage");
-					consolidationComponent.verifyConsolidationPackage(testCaseContext, expectedFilesInPackage);
+					consolidationComponent.verifyConsolidationPackage(testCaseContext, "Preview", releaseId, expectedFilesInPackage);
+					if(!testCaseContext.isTestCaseSuccess()) {
+						return;
+					}	
 				}
 			}
 		} else {

@@ -4,7 +4,10 @@
 package com.ca.nbiapps.service.impl;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,15 +57,15 @@ public class SalesForceComponent {
 	 * @param testCaseContext
 	 * @param tasks
 	 */
-	public void adjustTaskIdStatusToDoConsolidationPackage(TestCaseContext testCaseContext, JSONArray tasks) throws Exception {
+	public void adjustTaskIdStatusToDoConsolidationPackage(TestCaseContext testCaseContext, String tasks) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		try {			
+		try {	
 			String url = propertyComponents.getBuildServiceBaseUrl()+"/test/updateSFStatusForConsolidated?siloName="+propertyComponents.getSiloName()+"&taskIds="+tasks.toString()+"&cycleName=Preview";
 			Type returnTypeOfObject = new TypeToken<BaseResponse>() {
 			}.getType();
 			BaseResponse baseResponse = (BaseResponse)restServiceClient.getRestAPICall(logger, url, ResponseModel.class, returnTypeOfObject);
+			testCaseContext.setTestCaseSuccess(baseResponse.isResponseStatus());
 			if(!baseResponse.isResponseStatus()) {
-				testCaseContext.setTestCaseSuccess(false);
 				testCaseContext.setTestCaseFailureReason("Failed to update taskId status in SalesForce");
 				return;
 			}

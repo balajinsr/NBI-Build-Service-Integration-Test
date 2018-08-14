@@ -3,6 +3,7 @@ package com.ca.nbiapps.build.client;
 import java.lang.reflect.Type;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,7 +20,8 @@ import com.google.gson.GsonBuilder;
  */
 @Component
 public class RestServiceClient {
-
+	
+	
 	public Object getRestAPICall(Logger logger, String url, Class<?> className, Type returnTypeOfObject) throws Exception {
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<?> responseJSON = restTemplate.getForEntity(url, className);
