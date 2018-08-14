@@ -11,9 +11,12 @@ import org.json.JSONObject;
 public class TestCaseContext {
 	private Logger logger;
 	private JSONObject testCaseData;
+	private Long buildNumber;
 	private String testCaseName;
 	private boolean testCaseSuccess;
 	private String testCaseFailureReason;
+	private String baseGitCommitId;
+	private String headGitCommitId;
 	
 	public JSONObject getTestCaseData() {
 		return testCaseData;
@@ -44,5 +47,23 @@ public class TestCaseContext {
 	}
 	public void setLogger(Logger logger) {
 		this.logger = logger;
+	}
+	public Long getBuildNumber() {
+		return buildNumber;
+	}
+	public void setBuildNumber(Long buildNumber) {
+		this.buildNumber = buildNumber;
+	}
+	public String getBaseGitCommitId() {
+		return baseGitCommitId;
+	}
+	public void setBaseGitCommitId(String baseGitCommitId) {
+		this.baseGitCommitId = baseGitCommitId;
+	}
+	public String getHeadGitCommitId() {
+		return headGitCommitId;
+	}
+	public void setHeadGitCommitId(String headGitCommitId) {
+		this.headGitCommitId = headGitCommitId;
 	}
 }

@@ -35,6 +35,7 @@ import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.util.FS;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ca.nbiapps.build.model.TestCaseContext;
@@ -46,9 +47,13 @@ import com.jcraft.jsch.Session;
  *  @author Balaji N
  */
 @Component
-public class GitComponent extends CommonComponent {
+public class GitComponent {
 
+	@Autowired
+	PropertyComponents propertyComponents;
 	
+	@Autowired
+	CommonComponent commonComponent;
 
 	public SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
 		@Override
@@ -291,17 +296,19 @@ public class GitComponent extends CommonComponent {
 
 	
 
-	public boolean processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
+	public void processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		boolean isAvailableGitChanges = false;	
 		boolean isCloneSuccess = cloneRepo(logger)?true:false;
 		
 		if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
 			doGitLocalCommit(taskId);
 			gitPush(logger, false, "origin");
-			isAvailableGitChanges = true;
+			testCaseContext.setTestCaseSuccess(true);
+		} else {
+			testCaseContext.setTestCaseSuccess(false);
+			testCaseContext.setTestCaseFailureReason("No changes pushed to git");
 		}
-		return isAvailableGitChanges;
+		
 	}
 
 	public boolean doGitLocalChanges(TestCaseContext testCaseContext, JSONObject buildTask) throws Exception {
@@ -314,8 +321,8 @@ public class GitComponent extends CommonComponent {
 			String fromPath = fileObj.getString("filePath");
 			String action = fileObj.getString("action");
 			String md5Value = fileObj.getString("md5Value");
-			Path from = getPathByOSSpecific(srcBasePath + File.separator + fromPath);
-			Path to = getPathByOSSpecific(destBasePath + File.separator + fromPath);
+			Path from = commonComponent.getPathByOSSpecific(srcBasePath + File.separator + fromPath);
+			Path to = commonComponent.getPathByOSSpecific(destBasePath + File.separator + fromPath);
 
 			if (action.equalsIgnoreCase("delete")) {
 				Files.delete(to);

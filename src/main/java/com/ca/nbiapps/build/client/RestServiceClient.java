@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.ca.nbiapps.build.model.ResponseModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,10 +28,10 @@ public class RestServiceClient {
 		return gson.fromJson(jsonStr, returnTypeOfObject);
 	}
 	
-	public Object getRestAPICall(Logger logger, String url, Class<?> className) throws Exception {
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<?> responseJSON = restTemplate.getForEntity(url, className);
-		return responseJSON.getBody();
+	public Object getSubJSONParseCall(Logger logger, Type returnTypeOfObject, ResponseModel responseModel) throws Exception {
+		Gson gson = new GsonBuilder().create();
+		String jsonStr = gson.toJson(responseModel.getData());
+		return gson.fromJson(jsonStr, returnTypeOfObject);
 	}
 
 	public Object postRestAPICall(Logger logger, String url, HttpHeaders requestHeaders, String jsonPayLoadToPost, Class<?> className) throws Exception {

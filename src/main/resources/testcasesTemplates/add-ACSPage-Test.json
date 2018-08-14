@@ -13,9 +13,9 @@
           ],
           "buildAssertValues": {
             "buildStatus": "Build Success",
-            "expectedToVerify": {
-              "artifactUploadStatus": "Upload Success",
+            "expectedToVerify": {  
               "isArtifactsAvailable" : true,
+              "artifactUploadStatus": "Upload Success",
               "expectedFilesInPackage": [
                 {
                   "filePath": "",
@@ -63,7 +63,7 @@
     }
   ],
   "promoteToValFac":{
-  	  "promotedApproval": true,
+  	  "promotedApproval": false,
       "adjustTaskIdStatusAuto":true
    },
    "promoteToProduction":{

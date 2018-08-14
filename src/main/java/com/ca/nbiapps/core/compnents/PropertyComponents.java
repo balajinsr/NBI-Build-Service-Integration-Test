@@ -28,7 +28,7 @@ public class PropertyComponents {
 	public String gitUpstreamSshUrl;
 
 	@Value("${integration.test.reset_git_commit_id}")
-	public String gitCommitSshId;
+	public String gitResetCommitSshId;
 	// git properties - end
 
 	// logger properties - start
@@ -40,8 +40,8 @@ public class PropertyComponents {
 	@Value("${integration.test.test_data_base_path}")
 	public String testDataBasePath;
 
-	@Value("${integration.test.pull_request_url}")
-	public String pullRequestServiceUrl;
+	@Value("${integration.test.build_service_base_url}")
+	public String buildServiceBaseUrl;
 	// build service data and urls - end
 
 	// artifactory properties - start
@@ -98,12 +98,12 @@ public class PropertyComponents {
 		this.gitUpstreamSshUrl = gitUpstreamSshUrl;
 	}
 
-	public String getGitCommitSshId() {
-		return gitCommitSshId;
+	public String getGitResetCommitSshId() {
+		return gitResetCommitSshId;
 	}
 
-	public void setGitCommitSshId(String gitCommitSshId) {
-		this.gitCommitSshId = gitCommitSshId;
+	public void setGitResetCommitSshId(String gitResetCommitSshId) {
+		this.gitResetCommitSshId = gitResetCommitSshId;
 	}
 
 	public String getLogLocationPath() {
@@ -122,12 +122,14 @@ public class PropertyComponents {
 		this.testDataBasePath = testDataBasePath;
 	}
 
-	public String getPullRequestServiceUrl() {
-		return pullRequestServiceUrl;
+	
+
+	public String getBuildServiceBaseUrl() {
+		return buildServiceBaseUrl;
 	}
 
-	public void setPullRequestServiceUrl(String pullRequestServiceUrl) {
-		this.pullRequestServiceUrl = pullRequestServiceUrl;
+	public void setBuildServiceBaseUrl(String buildServiceBaseUrl) {
+		this.buildServiceBaseUrl = buildServiceBaseUrl;
 	}
 
 	public String getMavenRepoName() {

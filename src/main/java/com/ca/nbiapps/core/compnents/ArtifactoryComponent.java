@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * @author Balaji N
  */
 @Component
-public class ArtifactoryComponent extends CommonComponent {
+public class ArtifactoryComponent  {
 	public Artifactory createArtifactory(String username, String password, String artifactoryUrl) {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(artifactoryUrl)){
             throw new IllegalArgumentException("Arguments passed to createArtifactory are not valid");
