@@ -26,9 +26,6 @@ public class PropertyComponents {
 
 	@Value("${integration.test.git_upstream_ssh_url}")
 	public String gitUpstreamSshUrl;
-
-	@Value("${integration.test.reset_git_commit_id}")
-	public String gitResetCommitSshId;
 	// git properties - end
 
 	// logger properties - start
@@ -103,14 +100,6 @@ public class PropertyComponents {
 
 	public void setGitUpstreamSshUrl(String gitUpstreamSshUrl) {
 		this.gitUpstreamSshUrl = gitUpstreamSshUrl;
-	}
-
-	public String getGitResetCommitSshId() {
-		return gitResetCommitSshId;
-	}
-
-	public void setGitResetCommitSshId(String gitResetCommitSshId) {
-		this.gitResetCommitSshId = gitResetCommitSshId;
 	}
 
 	public String getLogLocationPath() {
