@@ -18,16 +18,15 @@
               "artifactUploadStatus": "Upload Success",
               "expectedFilesInPackage": [
                 {
-                  "filePath": "",
-                  "md5Value": "",
-                  "action": ""
+                  "filePath": "nbiservice-acspage/acspage/OTP_Auth/firstTest.html",
+                  "md5Value": "bbd636bad4c05715566999fd407b8897"
                 }
               ],
               "expectedEntriesInDB": [
                 {
-                  "filePath": "",
-                  "md5Value": "",
-                  "action": ""
+                  "filePath": "acspage/OTP_Auth/firstTest.html",
+                  "md5Value": "bbd636bad4c05715566999fd407b8897",
+                  "action": "add"
                 }
               ]
             }
@@ -54,9 +53,9 @@
       
       "expectedEntriesInManifestXML": [
       {
-        "filePath": "",
-        "md5Value": "",
-        "action": ""
+        "filePath": "acspage/OTP_Auth/firstTest.html",
+        "md5Value": "bbd636bad4c05715566999fd407b8897",
+        "action": "add"
       }
       ]
     }

@@ -5,13 +5,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.jfrog.artifactory.client.Artifactory;
-import org.jfrog.artifactory.client.model.Folder;
-import org.jfrog.artifactory.client.model.Item;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -29,7 +24,7 @@ import com.google.gson.reflect.TypeToken;
  *
  */
 @Component
-public class ConsolidationComponent {
+public class ConsolidationComponent extends ArtifactoryComponent {
 
 	@Autowired
 	public PropertyComponents propertyComponents;
@@ -39,9 +34,6 @@ public class ConsolidationComponent {
 
 	@Autowired
 	CommonComponent commonComponent;
-
-	@Autowired
-	ArtifactoryComponent artifactoryComponent;
 
 	public String doConsolidationPackage(TestCaseContext testCaseContext, String cycleName, String tasks) throws Exception {
 		Logger logger = testCaseContext.getLogger();
@@ -77,61 +69,19 @@ public class ConsolidationComponent {
 
 	public void verifyConsolidationPackage(TestCaseContext testCaseContext, String cycleName, String releaseId, JSONArray expectedFilesInPackage) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		String saveLocalDir = commonComponent.getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString();
-
-		boolean isSuccessDownload = downloadConsolidatedPackage(logger, cycleName, releaseId);
+		String saveLocalDir = commonComponent.getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString()+File.separator+testCaseContext.getTestCaseName();
+		saveLocalDir = saveLocalDir+"/"+releaseId;
+		String artifactsUri = "/" + propertyComponents.getSiloName() + "/" + cycleName.toLowerCase() + "-release_" + releaseId;
+		boolean isSuccessDownload = downloadPackage(logger, cycleName, saveLocalDir, artifactsUri);
 		if (isSuccessDownload) {
-			File expectedFileInPackage = null;
-			for (int i = 0; i < expectedFilesInPackage.length(); i++) {
-				JSONObject object = expectedFilesInPackage.getJSONObject(i);
-				expectedFileInPackage = new File(saveLocalDir + "/" + object.getString("filePath"));
-				String expectedMd5Value = object.getString("md5Value");
-				if (expectedFileInPackage.exists() && expectedMd5Value.equals(commonComponent.getMD5Sum(expectedFileInPackage))) {
-					testCaseContext.setTestCaseSuccess(true);
-				} else {
-					testCaseContext.setTestCaseSuccess(false);
-					if (!expectedFileInPackage.exists()) {
-						testCaseContext.setTestCaseFailureReason("Incorrect consolidated package. [ExpectedFileInPackage = " + expectedFileInPackage.toString()
-								+ " - isExistInPackage - " + expectedFileInPackage.exists() + "]");
-						return;
-					}
-					String actualMd5Value = commonComponent.getMD5Sum(expectedFileInPackage);
-					if (!expectedMd5Value.equals(actualMd5Value)) {
-						testCaseContext.setTestCaseFailureReason(
-								"Incorrect consolidated package . [ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]");
-					}
-					return;
-				}
-
-			}
+			commonComponent.assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
 			testCaseContext.setTestCaseFailureReason("consolidated package download failed.");
 		}
 	}
-
-	private boolean downloadConsolidatedPackage(Logger logger, String cycleName, String releaseId) throws Exception {
-		String saveLocalDir = commonComponent.getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString();
-		
-		FileUtils.cleanDirectory(new File(saveLocalDir)); 
-		
-		Artifactory artifactory = artifactoryComponent.createArtifactory(propertyComponents.getArtifactoryUsername(), propertyComponents.getArtifactoryPassword(),
-				propertyComponents.getArtifactoryBaseUrl());
-		String uri = "/" + propertyComponents.getSiloName() + "/" + cycleName.toLowerCase() + "-release_" + releaseId;
-		Folder folder = artifactory.repository(propertyComponents.getMavenRepoName()).folder(uri).info();
-		List<Item> childrens = folder.getChildren();
-
-		File file = null;
-		for (Item item : childrens) {
-			file = artifactoryComponent.downloadFile(artifactory, folder.getRepo(), folder.getPath() + item.getUri(), saveLocalDir + item.getUri());
-			if (item.getUri().contains(".zip")) {
-				boolean isUnzipSuccess = artifactoryComponent.unzip(file.toString(), saveLocalDir +"/"+artifactoryComponent.getArtifactName(item.getUri()));
-				if (isUnzipSuccess)
-					file.delete();
-			}
-		}
-		return true;
-	}
+	
+	
 	
 	public String getConsolidatedTaskIds(JSONArray tasks)  {
 		List<String> taskIds = new ArrayList<>();

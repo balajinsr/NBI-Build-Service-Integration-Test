@@ -1,8 +1,10 @@
 package com.ca.nbiapps.core.compnents;
 
+import java.io.File;
 import java.lang.reflect.Type;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,8 +21,6 @@ import com.ca.nbiapps.build.model.Repo;
 import com.ca.nbiapps.build.model.ResponseModel;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.build.model.User;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 /**
  * 
@@ -28,7 +28,7 @@ import com.google.gson.reflect.TypeToken;
  *
  */
 @Component
-public class BuildClientComponent {
+public class BuildClientComponent extends ArtifactoryComponent {
 	
 	@Autowired
 	PropertyComponents propertyComponents;
@@ -72,8 +72,6 @@ public class BuildClientComponent {
 		return pullReqEvent;
 	}
 
-	
-
 	public void pullRequest(TestCaseContext testCaseContext, String taskId) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		String url = propertyComponents.getBuildServiceBaseUrl()+"/processPullRequest";
@@ -107,11 +105,12 @@ public class BuildClientComponent {
 	 * @param taskId
 	 * @param buildTask
 	 */
-	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData,  JSONObject buildTask) {
+	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData,  JSONObject buildTask) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		JSONObject buildAssertValues = buildTask.getJSONObject("buildAssertValues");
 		JSONObject expectedToVerify = buildAssertValues.getJSONObject("expectedToVerify");
 		boolean expectedArtifactsAvailable = expectedToVerify.getBoolean("isArtifactsAvailable");
+		JSONArray expectedFilesInPackage = expectedToVerify.getJSONArray("expectedFilesInPackage");
 		if(actualBuildData.isArtifactsAvailable() && expectedArtifactsAvailable) {
 			String buildSuccess = buildAssertValues.getString("buildStatus");
 			String artifactUploadStatus = expectedToVerify.getString("artifactUploadStatus");
@@ -128,6 +127,8 @@ public class BuildClientComponent {
 				return;
 			}
 			logger.info("BuildResults: :: "+actualBuildData.toString());
+			
+			verifyBuildPackage(testCaseContext, taskId, actualBuildData.getBuildNumber(), expectedFilesInPackage);
 			testCaseContext.setTestCaseSuccess(true);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
@@ -184,10 +185,23 @@ public class BuildClientComponent {
 		}
 	}
 	
+	public void verifyBuildPackage(TestCaseContext testCaseContext, String taskId, Long buildNumber, JSONArray expectedFilesInPackage) throws Exception {
+		Logger logger = testCaseContext.getLogger();
+		String saveLocalDir = commonComponent.getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString()+File.separator+testCaseContext.getTestCaseName();
+		saveLocalDir = saveLocalDir+"/"+taskId+"_"+buildNumber;
+		
+		String artifactsUri = "/" + propertyComponents.getSiloName() + "/" + taskId + "/" + buildNumber;
 	
+		boolean isSuccessDownload = downloadPackage(logger, "Preview", saveLocalDir, artifactsUri);
+		if (isSuccessDownload) {
+			commonComponent.assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage);
+		} else {
+			testCaseContext.setTestCaseSuccess(false);
+			testCaseContext.setTestCaseFailureReason("build package download failed.");
+		}
+	}
 	
-
-	public void resetDB(TestCaseContext testCaseContext) throws Exception {
+	public void resetBuildDBEntries(TestCaseContext testCaseContext) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		try {
 			String url = propertyComponents.getBuildServiceBaseUrl()+"/test/resetDB?siloName="+propertyComponents.getSiloName()+"buildNumber="+testCaseContext.getBuildNumber();

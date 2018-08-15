@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -18,6 +20,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfrog.artifactory.client.Artifactory;
 import org.jfrog.artifactory.client.ArtifactoryClientBuilder;
+import org.jfrog.artifactory.client.model.Folder;
+import org.jfrog.artifactory.client.model.Item;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,6 +30,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ArtifactoryComponent  {
+	
+	@Autowired
+	PropertyComponents propertyComponents;
+	
+	@Autowired
+	CommonComponent commonComponent;
+	
 	public Artifactory createArtifactory(String username, String password, String artifactoryUrl) {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(artifactoryUrl)){
             throw new IllegalArgumentException("Arguments passed to createArtifactory are not valid");
@@ -46,6 +58,30 @@ public class ArtifactoryComponent  {
 			return path.getFileName().toString().replace(".zip", "");
 		}
 		return "";
+	}
+	
+	
+
+	public boolean downloadPackage(Logger logger, String cycleName, String saveLocalDir, String artifactsUri) throws Exception {
+		FileUtils.cleanDirectory(new File(saveLocalDir).getParentFile().getParentFile()); 
+		Files.createDirectories(commonComponent.getPathByOSSpecific(saveLocalDir));
+		
+		Artifactory artifactory = createArtifactory(propertyComponents.getArtifactoryUsername(), propertyComponents.getArtifactoryPassword(),
+				propertyComponents.getArtifactoryBaseUrl());
+		
+		Folder folder = artifactory.repository(propertyComponents.getMavenRepoName()).folder(artifactsUri).info();
+		List<Item> childrens = folder.getChildren();
+
+		File file = null;
+		for (Item item : childrens) {
+			file = downloadFile(artifactory, folder.getRepo(), folder.getPath() + item.getUri(), saveLocalDir + item.getUri());
+			if (item.getUri().contains(".zip")) {
+				boolean isUnzipSuccess = unzip(file.toString(), saveLocalDir +"/"+getArtifactName(item.getUri()));
+				if (isUnzipSuccess)
+					file.delete();
+			}
+		}
+		return true;
 	}
 	
 	 public java.io.File downloadFile(Artifactory artifactory, String repo, String filePath, String fileDownloadToLocation) throws Exception {

@@ -16,7 +16,7 @@ import com.ca.nbiapps.build.util.FileUtils;
 @ContextConfiguration(locations = { "/applicationContext.xml" })
 public class BaseTest extends AbstractTestNGSpringContextTests {
 	
-	public void handleException(Logger logger, Exception e) {
+	public void handleException(Logger logger,Exception e) {
 		logger.error("Error: "+e,e);
 	}
 	

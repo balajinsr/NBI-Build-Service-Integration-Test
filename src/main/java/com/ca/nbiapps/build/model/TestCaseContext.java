@@ -1,5 +1,7 @@
 package com.ca.nbiapps.build.model;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 /**
@@ -11,12 +13,19 @@ import org.json.JSONObject;
 public class TestCaseContext {
 	private Logger logger;
 	private JSONObject testCaseData;
-	private Long buildNumber;
+	
 	private String testCaseName;
 	private boolean testCaseSuccess;
 	private String testCaseFailureReason;
+	
+	// build data.
+	private Long buildNumber;
+	private boolean gitTaskSuccess;
 	private String baseGitCommitId;
 	private String headGitCommitId;
+	
+	// consolidate data.
+	private List<String> releaseIdList;
 	
 	public JSONObject getTestCaseData() {
 		return testCaseData;
@@ -65,5 +74,17 @@ public class TestCaseContext {
 	}
 	public void setHeadGitCommitId(String headGitCommitId) {
 		this.headGitCommitId = headGitCommitId;
+	}
+	public List<String> getReleaseIdList() {
+		return releaseIdList;
+	}
+	public void setReleaseIdList(List<String> releaseIdList) {
+		this.releaseIdList = releaseIdList;
+	}
+	public boolean isGitTaskSuccess() {
+		return gitTaskSuccess;
+	}
+	public void setGitTaskSuccess(boolean gitTaskSuccess) {
+		this.gitTaskSuccess = gitTaskSuccess;
 	}
 }

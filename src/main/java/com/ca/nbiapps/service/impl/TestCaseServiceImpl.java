@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.TestContext;
 
 import com.ca.nbiapps.build.model.BuildData;
 import com.ca.nbiapps.build.model.TestCaseContext;
@@ -43,6 +44,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 		JSONArray developerTasks = testCaseData.getJSONArray("developerTasks");
 		String baseGitCommitSHAId = gitComponent.getLastestCommitId();
 		testCaseContext.setBaseGitCommitId(baseGitCommitSHAId);
+		testCaseContext.setHeadGitCommitId(baseGitCommitSHAId);
 		Long beforeTestCaseBuildNumber = buildClientComponent.getPreviousBuildNumber(testCaseContext.getLogger());
 		testCaseContext.setBuildNumber(beforeTestCaseBuildNumber);
 		
@@ -125,18 +127,21 @@ public class TestCaseServiceImpl implements TestCaseService {
 		JSONObject jsonTemplateObject = testCaseContext.getTestCaseData();
 		Logger logger = testCaseContext.getLogger();
 		boolean rebaseOrigin = (boolean) jsonTemplateObject.get("rebase-origin");
-		String resetCommitId = propertyComponents.getGitResetCommitSshId();
-		gitComponent.gitResetHard(logger, resetCommitId);
-		if (rebaseOrigin) {
-			gitComponent.gitPush(logger, true, "origin");
-		}
-		boolean resetDB = (boolean) jsonTemplateObject.get("resetDB");
-		if (resetDB) {
-			//buildClientComponent.resetDB(testCaseContext);
-		}
-		boolean rebaseUpstream = (boolean) jsonTemplateObject.get("rebase-upstream");
-		if (rebaseUpstream) {
-			gitComponent.gitPush(logger, true, "upstream");
+		String baseGitCommitId = testCaseContext.getBaseGitCommitId();
+		String headGitCommitId = testCaseContext.getHeadGitCommitId();
+		if(!baseGitCommitId.equals(headGitCommitId)) {
+			gitComponent.gitResetHard(logger, baseGitCommitId);
+			if (rebaseOrigin) {
+				gitComponent.gitPush(logger, true, "origin");
+			}
+			boolean resetDB = (boolean) jsonTemplateObject.get("resetDB");
+			if (resetDB) {
+				//buildClientComponent.resetBuildDBEntries(testCaseContext);
+			}
+			boolean rebaseUpstream = (boolean) jsonTemplateObject.get("rebase-upstream");
+			if (rebaseUpstream) {
+				gitComponent.gitPush(logger, true, "upstream");
+			}
 		}
 	}
 }

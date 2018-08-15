@@ -11,9 +11,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.common.logger.AsynchLogger;
 import com.ca.nbiapps.common.logger.LoggerPool;
 import com.google.gson.Gson;
@@ -105,6 +108,31 @@ public class CommonComponent {
 	public String getMD5Sum(File file) throws IOException {
 		try (FileInputStream fileInputStream = new FileInputStream(file)) {
 			return DigestUtils.md5Hex(IOUtils.toByteArray(fileInputStream));
+		}
+	}
+	
+	public void assertPackageFiles(TestCaseContext testCaseContext, String saveLocalDir, JSONArray expectedFilesInPackage) throws Exception {
+		File expectedFileInPackage = null;
+		for (int i = 0; i < expectedFilesInPackage.length(); i++) {
+			JSONObject object = expectedFilesInPackage.getJSONObject(i);
+			expectedFileInPackage = new File(saveLocalDir + "/" + object.getString("filePath"));
+			String expectedMd5Value = object.getString("md5Value");
+			if (expectedFileInPackage.exists() && expectedMd5Value.equals(getMD5Sum(expectedFileInPackage))) {
+				testCaseContext.setTestCaseSuccess(true);
+			} else {
+				testCaseContext.setTestCaseSuccess(false);
+				if (!expectedFileInPackage.exists()) {
+					String message = "Incorrect package. [ExpectedFileInPackage = " + expectedFileInPackage+" - isExistInPackage - " + expectedFileInPackage.exists()+"]";
+					testCaseContext.setTestCaseFailureReason(message);
+					return;
+				}
+				String actualMd5Value = getMD5Sum(expectedFileInPackage);
+				if (!expectedMd5Value.equals(actualMd5Value)) {
+					testCaseContext.setTestCaseFailureReason(
+							"Incorrect package . [ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]");
+				}
+				return;
+			}
 		}
 	}
 }
