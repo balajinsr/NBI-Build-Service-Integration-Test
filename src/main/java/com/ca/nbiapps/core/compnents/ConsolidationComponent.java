@@ -34,6 +34,7 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 	RestServiceClient restServiceClient;
 
 	public String doConsolidationPackage(TestCaseContext testCaseContext, String cycleName, String tasks) throws Exception {
+		int cycleIndex = ("ValFac".equals(cycleName)?1:("Prodution".equals(cycleName))?2:0);
 		Logger logger = testCaseContext.getLogger();
 		String url = propertyComponents.getBuildServiceBaseUrl() + "/pullDTLevelChanges";
 		HttpHeaders requestHeaders = restServiceClient.createHttpHeader("*/*", "UTF-8", "application/json");
@@ -57,6 +58,7 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 		TaskLevelBaseRes taskLevelBaseRes = (TaskLevelBaseRes) restServiceClient.getSubJSONParseCall(logger, returnTypeOfSub, responseModel);
 		if (taskLevelBaseRes != null && taskLevelBaseRes.getReleaseId() != null) {
 			testCaseContext.setTestCaseSuccess(true);
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().CON_PACKAGE, cycleIndex);
 			return taskLevelBaseRes.getReleaseId();
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
@@ -76,6 +78,7 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 		int cycleIndex = ("ValFac".equals(cycleName)?1:("Prodution".equals(cycleName))?2:0);
 		if (isSuccessDownload) {
 			assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage, cycleIndex, testCaseContext.getBuildTestStats().CON_PACKAGE_ASSERT);
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().CON_PACKAGE_DOWNLOAD, cycleIndex);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
 			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_DOWNLOAD, cycleIndex, "consolidated package download failed.");

@@ -122,6 +122,7 @@ public class CommonComponent {
 			String actualMd5Value = getMD5Sum(expectedFileInPackage);
 			if (expectedFileInPackage.exists() && expectedMd5Value.equals(actualMd5Value)) {
 				testCaseContext.setTestCaseSuccess(true);
+				setStepSuccessStatus(stepStats, stepArrayIndex);
 				logger.info("FilePath Assert true - [ExpectedFileInPackage = " + expectedFileInPackage+" - isExistInPackage - " + expectedFileInPackage.exists()+"]");
 				logger.info("Md5Value Assert true - ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]");
 			} else {

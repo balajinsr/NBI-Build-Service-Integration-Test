@@ -125,6 +125,8 @@ public class BuildClientComponent extends ArtifactoryComponent {
 					testCaseContext.setTestCaseSuccess(false);
 					setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected build status: "+buildSuccess+", Actual Build Status: "+actualBuildData.getBuildStatus());
 					return;
+				} else {
+					setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0);
 				}
 				
 				if(!artifactUploadStatus.equals(actualBuildData.getArtifactUploadStatus())) {
@@ -204,6 +206,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 		logger.info("Build artifacts URL: "+artifactsUri);
 		boolean isSuccessDownload = downloadPackage(logger, "Preview", saveLocalDir, artifactsUri);
 		if (isSuccessDownload) {
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_PACKAGE_DOWNLOAD, 0);
 			assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage, 0, testCaseContext.getBuildTestStats().BUILD_PACKAGE_ASSERT);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);

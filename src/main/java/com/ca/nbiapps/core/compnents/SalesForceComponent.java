@@ -63,7 +63,7 @@ public class SalesForceComponent extends CommonComponent {
 				return;
 			}
 			testCaseContext.setTestCaseSuccess(true);
-			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, 0); 
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, cycleIndex); 
 			logger.info("TestCase: ["+testCaseContext.getTestCaseName()+"], Changed tasks ["+tasks+"] status to \"Ready to Deploy\"");
 		} catch (Exception e) {
 			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, cycleIndex, "Failed to update taskId status to \"Ready to Deploy\" in SalesForce - "+e.getMessage()); 
