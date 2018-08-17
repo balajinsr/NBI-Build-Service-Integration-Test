@@ -5,14 +5,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.TestContext;
-
 import com.ca.nbiapps.build.model.BuildData;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.core.compnents.BuildClientComponent;
 import com.ca.nbiapps.core.compnents.ConsolidationComponent;
 import com.ca.nbiapps.core.compnents.GitComponent;
 import com.ca.nbiapps.core.compnents.PropertyComponents;
+import com.ca.nbiapps.core.compnents.SalesForceComponent;
 import com.ca.nbiapps.service.TestCaseService;
 
 /**
@@ -100,7 +99,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 					String taskIds = consolidationComponent.getConsolidatedTaskIds(tasks);
 					if (doTaskStatusChangeAuto) {
 						
-						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, taskIds);
+						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, taskIds, 0);
 						if(!testCaseContext.isTestCaseSuccess()) {
 							return;
 						}
@@ -129,10 +128,12 @@ public class TestCaseServiceImpl implements TestCaseService {
 		boolean rebaseOrigin = (boolean) jsonTemplateObject.get("rebase-origin");
 		String baseGitCommitId = testCaseContext.getBaseGitCommitId();
 		String headGitCommitId = testCaseContext.getHeadGitCommitId();
+		logger.info("Rebase the git state from SHAID- "+headGitCommitId+", to SHAID"+baseGitCommitId);
 		if(!baseGitCommitId.equals(headGitCommitId)) {
 			gitComponent.gitResetHard(logger, baseGitCommitId);
 			if (rebaseOrigin) {
 				gitComponent.gitPush(logger, true, "origin");
+				logger.info("Sync the origin to SHAID:  "+baseGitCommitId);
 			}
 			boolean resetDB = (boolean) jsonTemplateObject.get("resetDB");
 			if (resetDB) {
@@ -141,6 +142,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 			boolean rebaseUpstream = (boolean) jsonTemplateObject.get("rebase-upstream");
 			if (rebaseUpstream) {
 				gitComponent.gitPush(logger, true, "upstream");
+				logger.info("Sync the upstream to SHAID:  "+baseGitCommitId);
 			}
 		}
 	}

@@ -4,19 +4,22 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+
+import com.ca.nbiapps.build.model.StepResults.BuildTestStats;
 /**
  * 
  * @author Balaji N
  *
  */
-
 public class TestCaseContext {
 	private Logger logger;
 	private JSONObject testCaseData;
-	
+
+	// testcase results.
+	private BuildTestStats BuildTestStats;
 	private String testCaseName;
 	private boolean testCaseSuccess;
-	private String testCaseFailureReason;
+	
 	
 	// build data.
 	private Long buildNumber;
@@ -45,12 +48,7 @@ public class TestCaseContext {
 	public void setTestCaseSuccess(boolean testCaseSuccess) {
 		this.testCaseSuccess = testCaseSuccess;
 	}
-	public String getTestCaseFailureReason() {
-		return testCaseFailureReason;
-	}
-	public void setTestCaseFailureReason(String testCaseFailureReason) {
-		this.testCaseFailureReason = testCaseFailureReason;
-	}
+	
 	public Logger getLogger() {
 		return logger;
 	}
@@ -86,5 +84,11 @@ public class TestCaseContext {
 	}
 	public void setGitTaskSuccess(boolean gitTaskSuccess) {
 		this.gitTaskSuccess = gitTaskSuccess;
+	}
+	public BuildTestStats getBuildTestStats() {
+		return BuildTestStats;
+	}
+	public void setBuildTestStats(BuildTestStats buildTestStats) {
+		BuildTestStats = buildTestStats;
 	}
 }

@@ -29,13 +29,10 @@ import org.springframework.stereotype.Component;
  * @author Balaji N
  */
 @Component
-public class ArtifactoryComponent  {
+public class ArtifactoryComponent extends CommonComponent {
 	
 	@Autowired
 	PropertyComponents propertyComponents;
-	
-	@Autowired
-	CommonComponent commonComponent;
 	
 	public Artifactory createArtifactory(String username, String password, String artifactoryUrl) {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(artifactoryUrl)){
@@ -64,7 +61,7 @@ public class ArtifactoryComponent  {
 
 	public boolean downloadPackage(Logger logger, String cycleName, String saveLocalDir, String artifactsUri) throws Exception {
 		FileUtils.cleanDirectory(new File(saveLocalDir).getParentFile().getParentFile()); 
-		Files.createDirectories(commonComponent.getPathByOSSpecific(saveLocalDir));
+		Files.createDirectories(getPathByOSSpecific(saveLocalDir));
 		
 		Artifactory artifactory = createArtifactory(propertyComponents.getArtifactoryUsername(), propertyComponents.getArtifactoryPassword(),
 				propertyComponents.getArtifactoryBaseUrl());

@@ -47,14 +47,11 @@ import com.jcraft.jsch.Session;
  *  @author Balaji N
  */
 @Component
-public class GitComponent {
+public class GitComponent extends CommonComponent {
 
 	@Autowired
 	PropertyComponents propertyComponents;
 	
-	@Autowired
-	CommonComponent commonComponent;
-
 	public SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
 		@Override
 		protected void configure(Host arg0, Session session) {
@@ -224,8 +221,6 @@ public class GitComponent {
 		}
 	}
 	
-	
-	
 
 	public String getLastestCommitId() throws Exception {
 		try (Git git = getGit(); RevWalk walk = new RevWalk(git.getRepository())) {
@@ -298,17 +293,23 @@ public class GitComponent {
 
 	public void processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		boolean isCloneSuccess = cloneRepo(logger)?true:false;
-		
-		if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
-			doGitLocalCommit(taskId);
-			gitPush(logger, false, "origin");
-			testCaseContext.setTestCaseSuccess(true);
-		} else {
-			testCaseContext.setTestCaseSuccess(false);
-			testCaseContext.setTestCaseFailureReason("No changes pushed to git");
+		try {
+			boolean isCloneSuccess = cloneRepo(logger)?true:false;
+			if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
+				doGitLocalCommit(taskId);
+				gitPush(logger, false, "origin");
+				
+				testCaseContext.setTestCaseSuccess(true);
+				logger.info("Git changes and commit task completed.");
+				setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, 0);
+			} else {
+				testCaseContext.setTestCaseSuccess(false);
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, 0, "No git changes pushed to git");
+			}
+		} catch(Exception e) {
+			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, 0, "git changed and push error - "+e.getMessage());
+			throw e;
 		}
-		
 	}
 
 	public boolean doGitLocalChanges(TestCaseContext testCaseContext, JSONObject buildTask) throws Exception {
@@ -321,8 +322,8 @@ public class GitComponent {
 			String fromPath = fileObj.getString("filePath");
 			String action = fileObj.getString("action");
 			String md5Value = fileObj.getString("md5Value");
-			Path from = commonComponent.getPathByOSSpecific(srcBasePath + File.separator + fromPath);
-			Path to = commonComponent.getPathByOSSpecific(destBasePath + File.separator + fromPath);
+			Path from = getPathByOSSpecific(srcBasePath + File.separator + fromPath);
+			Path to = getPathByOSSpecific(destBasePath + File.separator + fromPath);
 
 			if (action.equalsIgnoreCase("delete")) {
 				Files.delete(to);
@@ -340,8 +341,8 @@ public class GitComponent {
 		return true;
 	}
 
-	private boolean checkMd5(String md5Value, Path to) {
-		return "bbd636bad4c05715566999fd407b8897".equals(md5Value);
+	private boolean checkMd5(String md5Value, Path to) throws Exception {
+		String fileMd5Value = getMD5Sum(to.toFile());
+		return fileMd5Value.equals(md5Value);
 	}
-
 }

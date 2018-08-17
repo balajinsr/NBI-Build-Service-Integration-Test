@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.TestContext;
 
 import com.ca.nbiapps.build.client.RestServiceClient;
 import com.ca.nbiapps.build.model.ResponseModel;
@@ -32,9 +33,6 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 	@Autowired
 	RestServiceClient restServiceClient;
 
-	@Autowired
-	CommonComponent commonComponent;
-
 	public String doConsolidationPackage(TestCaseContext testCaseContext, String cycleName, String tasks) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		String url = propertyComponents.getBuildServiceBaseUrl() + "/pullDTLevelChanges";
@@ -47,7 +45,7 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 
 		Type returnTypeOfObject = new TypeToken<TaskLevelBaseReq>() {
 		}.getType();
-		String payLoad = commonComponent.toJsonFromObject(taskLevelReq, returnTypeOfObject);
+		String payLoad = toJsonFromObject(taskLevelReq, returnTypeOfObject);
 
 		System.out.println("PayLoad:" + payLoad);
 		Type returnTypeOfResponseModel = new TypeToken<ResponseModel>() {
@@ -62,26 +60,27 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 			return taskLevelBaseRes.getReleaseId();
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
-			testCaseContext.setTestCaseFailureReason("Consolidation packate generation failed");
+			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE, 0, "Consolidation packate generation failed");
 		}
 		return "";
 	}
 
 	public void verifyConsolidationPackage(TestCaseContext testCaseContext, String cycleName, String releaseId, JSONArray expectedFilesInPackage) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		String saveLocalDir = commonComponent.getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString()+File.separator+testCaseContext.getTestCaseName();
+		String saveLocalDir = getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString()+File.separator+testCaseContext.getTestCaseName();
 		saveLocalDir = saveLocalDir+"/"+releaseId;
+		
 		String artifactsUri = "/" + propertyComponents.getSiloName() + "/" + cycleName.toLowerCase() + "-release_" + releaseId;
+		logger.info("Consolidated Artifacts URL: "+artifactsUri);
 		boolean isSuccessDownload = downloadPackage(logger, cycleName, saveLocalDir, artifactsUri);
+		int cycleIndex = ("ValFac".equals(cycleName)?1:("Prodution".equals(cycleName))?2:0);
 		if (isSuccessDownload) {
-			commonComponent.assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage);
+			assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage, cycleIndex, testCaseContext.getBuildTestStats().CON_PACKAGE_ASSERT);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
-			testCaseContext.setTestCaseFailureReason("consolidated package download failed.");
+			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_DOWNLOAD, cycleIndex, "consolidated package download failed.");
 		}
 	}
-	
-	
 	
 	public String getConsolidatedTaskIds(JSONArray tasks)  {
 		List<String> taskIds = new ArrayList<>();

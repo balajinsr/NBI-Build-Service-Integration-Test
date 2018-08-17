@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ca.nbiapps.build.model.TestCaseContext;
+import com.ca.nbiapps.build.model.StepResults.BuildTestStats;
 import com.ca.nbiapps.common.logger.AsynchLogger;
 import com.ca.nbiapps.common.logger.LoggerPool;
 import com.google.gson.Gson;
@@ -111,28 +112,52 @@ public class CommonComponent {
 		}
 	}
 	
-	public void assertPackageFiles(TestCaseContext testCaseContext, String saveLocalDir, JSONArray expectedFilesInPackage) throws Exception {
+	public void assertPackageFiles(TestCaseContext testCaseContext, String saveLocalDir, JSONArray expectedFilesInPackage, int stepArrayIndex, BuildTestStats stepStats) throws Exception {
 		File expectedFileInPackage = null;
+		Logger logger = testCaseContext.getLogger();
 		for (int i = 0; i < expectedFilesInPackage.length(); i++) {
 			JSONObject object = expectedFilesInPackage.getJSONObject(i);
 			expectedFileInPackage = new File(saveLocalDir + "/" + object.getString("filePath"));
 			String expectedMd5Value = object.getString("md5Value");
-			if (expectedFileInPackage.exists() && expectedMd5Value.equals(getMD5Sum(expectedFileInPackage))) {
+			String actualMd5Value = getMD5Sum(expectedFileInPackage);
+			if (expectedFileInPackage.exists() && expectedMd5Value.equals(actualMd5Value)) {
 				testCaseContext.setTestCaseSuccess(true);
+				logger.info("FilePath Assert true - [ExpectedFileInPackage = " + expectedFileInPackage+" - isExistInPackage - " + expectedFileInPackage.exists()+"]");
+				logger.info("Md5Value Assert true - ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]");
 			} else {
 				testCaseContext.setTestCaseSuccess(false);
 				if (!expectedFileInPackage.exists()) {
 					String message = "Incorrect package. [ExpectedFileInPackage = " + expectedFileInPackage+" - isExistInPackage - " + expectedFileInPackage.exists()+"]";
-					testCaseContext.setTestCaseFailureReason(message);
+					setStepFailedValues(stepStats, stepArrayIndex, message);
 					return;
-				}
-				String actualMd5Value = getMD5Sum(expectedFileInPackage);
+				} 
 				if (!expectedMd5Value.equals(actualMd5Value)) {
-					testCaseContext.setTestCaseFailureReason(
-							"Incorrect package . [ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]");
-				}
+					setStepFailedValues(stepStats, stepArrayIndex, "Incorrect package . [ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]");
+				} 
 				return;
 			}
 		}
+	}
+	
+	public void setStepFailedStatus(BuildTestStats stepStats, int stepArrayIndex) {
+		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Failed");
+	}
+	
+	public void setStepSuccessStatus(BuildTestStats stepStats, int stepArrayIndex) {
+		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Success");
+	}
+	
+	public void setStepReason(BuildTestStats stepStats, int stepArrayIndex, String stepReason) {
+		stepStats.getStepResults()[stepArrayIndex].setReason(stepReason);
+	}
+	
+	public void setStepFailedValues(BuildTestStats stepStats, int stepArrayIndex, String stepReason) {
+		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Failed");
+		stepStats.getStepResults()[stepArrayIndex].setReason(stepReason);
+	}
+	
+	public void setStepSuccessValues(BuildTestStats stepStats, int stepArrayIndex, String stepReason) {
+		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Success");
+		stepStats.getStepResults()[stepArrayIndex].setReason(stepReason);
 	}
 }

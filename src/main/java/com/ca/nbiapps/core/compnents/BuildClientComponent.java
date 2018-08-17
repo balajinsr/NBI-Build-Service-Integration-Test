@@ -36,9 +36,6 @@ public class BuildClientComponent extends ArtifactoryComponent {
 	@Autowired
 	RestServiceClient restServiceClient;
 	
-	@Autowired
-	CommonComponent commonComponent;
-	
 	private PullRequestEvent getPullRequest(TestCaseContext testCaseContext, String taskId) throws Exception {
 		PullRequestEvent pullReqEvent = new PullRequestEvent();
 		pullReqEvent.setAction("opened");
@@ -83,19 +80,27 @@ public class BuildClientComponent extends ArtifactoryComponent {
 			if (taskId != null) {
 				Type returnTypeOfObject = new TypeToken<PullRequestEvent>() {
 				}.getType();
-				String payLoad = commonComponent.toJsonFromObject(pullReqEvent, returnTypeOfObject);
+				String payLoad = toJsonFromObject(pullReqEvent, returnTypeOfObject);
 				System.out.println("PayLoad:" + payLoad);
 				Type returnTypeOfBaseResponse = new TypeToken<BaseResponse>() {
 				}.getType();
 				BaseResponse baseRes = (BaseResponse) restServiceClient.postRestAPICall(logger, url, requestHeaders, payLoad, ResponseModel.class, returnTypeOfBaseResponse);
 				logger.info("PullRequest Response : "+baseRes.toString());
 				testCaseContext.setTestCaseSuccess(baseRes.isResponseStatus());
+				if(!baseRes.isResponseStatus()) {
+					setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_PULL_REQUEST, 0, "Failed to create pull request"); 
+				} else {
+					setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_PULL_REQUEST, 0); 
+				}
 			} else {
 				// TODO: send an email
+				testCaseContext.setTestCaseSuccess(false);
 				logger.info("DT number not created in salesforce.. Try again.!!!");
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, 0, "DT number not created in salesforce.. Try again.!!!"); 
 			}
 
 		} catch (Exception e) {
+			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_PULL_REQUEST, 0, "Failed to create pull request "+e.getMessage()); 
 			throw e;
 		}
 	}
@@ -106,33 +111,36 @@ public class BuildClientComponent extends ArtifactoryComponent {
 	 * @param buildTask
 	 */
 	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData,  JSONObject buildTask) throws Exception {
-		Logger logger = testCaseContext.getLogger();
-		JSONObject buildAssertValues = buildTask.getJSONObject("buildAssertValues");
-		JSONObject expectedToVerify = buildAssertValues.getJSONObject("expectedToVerify");
-		boolean expectedArtifactsAvailable = expectedToVerify.getBoolean("isArtifactsAvailable");
-		JSONArray expectedFilesInPackage = expectedToVerify.getJSONArray("expectedFilesInPackage");
-		if(actualBuildData.isArtifactsAvailable() && expectedArtifactsAvailable) {
-			String buildSuccess = buildAssertValues.getString("buildStatus");
-			String artifactUploadStatus = expectedToVerify.getString("artifactUploadStatus");
-			
-			if(!buildSuccess.equals(actualBuildData.getBuildStatus())) {
+		try {
+			Logger logger = testCaseContext.getLogger();
+			JSONObject buildAssertValues = buildTask.getJSONObject("buildAssertValues");
+			JSONObject expectedToVerify = buildAssertValues.getJSONObject("expectedToVerify");
+			boolean expectedArtifactsAvailable = expectedToVerify.getBoolean("isArtifactsAvailable");
+			JSONArray expectedFilesInPackage = expectedToVerify.getJSONArray("expectedFilesInPackage");
+			if(actualBuildData.isArtifactsAvailable() && expectedArtifactsAvailable) {
+				String buildSuccess = buildAssertValues.getString("buildStatus");
+				String artifactUploadStatus = expectedToVerify.getString("artifactUploadStatus");
+				
+				if(!buildSuccess.equals(actualBuildData.getBuildStatus())) {
+					testCaseContext.setTestCaseSuccess(false);
+					setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected build status: "+buildSuccess+", Actual Build Status: "+actualBuildData.getBuildStatus());
+					return;
+				}
+				
+				if(!artifactUploadStatus.equals(actualBuildData.getArtifactUploadStatus())) {
+					testCaseContext.setTestCaseSuccess(false);
+					setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected upload artifacts status: "+artifactUploadStatus+", Actual upload artifacts Status: "+actualBuildData.getArtifactUploadStatus());
+					return;
+				}
+				logger.info("BuildResults: :: "+actualBuildData.toString());
+				verifyBuildPackage(testCaseContext, taskId, actualBuildData.getBuildNumber(), expectedFilesInPackage);
+			} else {
 				testCaseContext.setTestCaseSuccess(false);
-				testCaseContext.setTestCaseFailureReason("Expected build status: "+buildSuccess+", Actual Build Status: "+actualBuildData.getBuildStatus());
-				return;
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected artifacts ="+expectedArtifactsAvailable+", actually artifacts - "+actualBuildData.isArtifactsAvailable());
 			}
-			
-			if(!artifactUploadStatus.equals(actualBuildData.getArtifactUploadStatus())) {
-				testCaseContext.setTestCaseSuccess(false);
-				testCaseContext.setTestCaseFailureReason("Expected upload artifacts status: "+artifactUploadStatus+", Actual upload artifacts Status: "+actualBuildData.getArtifactUploadStatus());
-				return;
-			}
-			logger.info("BuildResults: :: "+actualBuildData.toString());
-			
-			verifyBuildPackage(testCaseContext, taskId, actualBuildData.getBuildNumber(), expectedFilesInPackage);
-			testCaseContext.setTestCaseSuccess(true);
-		} else {
-			testCaseContext.setTestCaseSuccess(false);
-			testCaseContext.setTestCaseFailureReason("Expected artifacts ="+expectedArtifactsAvailable+"actually artifacts - "+actualBuildData.isArtifactsAvailable());
+		} catch(Exception e) {
+			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, 0, "Failed to do build assert "+e.getMessage()); 
+			throw e;
 		}
 	}
 
@@ -158,10 +166,12 @@ public class BuildClientComponent extends ArtifactoryComponent {
 				buildData = (BuildData)restServiceClient.getSubJSONParseCall(logger, returnTypeOfSub, responseModel);
 				if(buildData!= null && buildData.getBuildStatus() != null && !"InProgress".equals(buildData.getBuildStatus())) {
 					testCaseContext.setTestCaseSuccess(true);
+					setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_RESULT_FETCH,0);
 					return buildData;
 				}
 			} catch(Exception e) {
 				testCaseContext.setTestCaseSuccess(false);
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_RESULT_FETCH,0, "BuildComplete and getBuildResults fetch failed "+e.getMessage());
 				logger.error("Error: "+e,e);
 			}
 			attempts++;
@@ -187,17 +197,17 @@ public class BuildClientComponent extends ArtifactoryComponent {
 	
 	public void verifyBuildPackage(TestCaseContext testCaseContext, String taskId, Long buildNumber, JSONArray expectedFilesInPackage) throws Exception {
 		Logger logger = testCaseContext.getLogger();
-		String saveLocalDir = commonComponent.getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString()+File.separator+testCaseContext.getTestCaseName();
+		String saveLocalDir = getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString()+File.separator+testCaseContext.getTestCaseName();
 		saveLocalDir = saveLocalDir+"/"+taskId+"_"+buildNumber;
 		
 		String artifactsUri = "/" + propertyComponents.getSiloName() + "/" + taskId + "/" + buildNumber;
-	
+		logger.info("Build artifacts URL: "+artifactsUri);
 		boolean isSuccessDownload = downloadPackage(logger, "Preview", saveLocalDir, artifactsUri);
 		if (isSuccessDownload) {
-			commonComponent.assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage);
+			assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage, 0, testCaseContext.getBuildTestStats().BUILD_PACKAGE_ASSERT);
 		} else {
 			testCaseContext.setTestCaseSuccess(false);
-			testCaseContext.setTestCaseFailureReason("build package download failed.");
+			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_PACKAGE_DOWNLOAD, 0, "build package download failed.");
 		}
 	}
 	
