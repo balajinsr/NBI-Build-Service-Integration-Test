@@ -295,6 +295,9 @@ public class GitComponent extends CommonComponent {
 		Logger logger = testCaseContext.getLogger();
 		try {
 			boolean isCloneSuccess = cloneRepo(logger)?true:false;
+			
+			if(buildStepIndex > 0) fillBuildStepResults(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, "Preview");
+			
 			if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
 				doGitLocalCommit(taskId);
 				gitPush(logger, false, "origin");

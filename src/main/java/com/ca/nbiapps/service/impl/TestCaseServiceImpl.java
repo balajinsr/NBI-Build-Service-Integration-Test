@@ -67,11 +67,11 @@ public class TestCaseServiceImpl implements TestCaseService {
 			String headGitCommitSHAId = gitComponent.getLastestCommitId();
 			testCaseContext.setHeadGitCommitId(headGitCommitSHAId);
 			Long previousBuildNumber = buildClientComponent.getPreviousBuildNumber(testCaseContext.getLogger());			
-			buildClientComponent.pullRequest(testCaseContext, taskId);
+			buildClientComponent.pullRequest(testCaseContext, taskId, i);
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
-			BuildData buildData = buildClientComponent.waitForBuildCompleteAndGetBuildResults(testCaseContext, taskId, previousBuildNumber);
+			BuildData buildData = buildClientComponent.waitForBuildCompleteAndGetBuildResults(testCaseContext, taskId, previousBuildNumber, i);
 			logger.info("BuildResults: :: "+buildData.toString());
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;

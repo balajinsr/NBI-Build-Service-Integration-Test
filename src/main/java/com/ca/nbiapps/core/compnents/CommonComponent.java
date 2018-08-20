@@ -172,6 +172,7 @@ public class CommonComponent {
 	public void fillBuildStepResults(BuildTestStats stepStats, String cycleName) {
 		List<StepResults> result = stepStats.getStepResults();
 		StepResults step = stepStats.getStepResults(cycleName);
+		step.setStepName(stepStats.name());
 		result.add(step);
 	}
 }

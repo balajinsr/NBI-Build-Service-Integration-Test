@@ -31,34 +31,31 @@ public class SalesForceComponent extends CommonComponent {
 	@Autowired
 	RestServiceClient restServiceClient;
 	
-	public void adjustTaskIdStatusForAcceptTheBuild(TestCaseContext testCaseContext, String taskId, int buildIndex) throws Exception {
+	public void adjustTaskIdStatusForAcceptTheBuild(TestCaseContext testCaseContext, String taskId, int buildStepIndex) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		try {
 			String url = propertyComponents.getBuildServiceBaseUrl()+"/test/updateSFStatusForBuild?siloName="+propertyComponents.getSiloName()+"&taskId="+taskId+"&cycleName=Preview";
 			Type returnTypeOfObject = new TypeToken<BaseResponse>() {
 			}.getType();
 			BaseResponse baseResponse = (BaseResponse)restServiceClient.getRestAPICall(logger, url, ResponseModel.class, returnTypeOfObject);
-			if(buildIndex > 0) {
-				BuildTestStats buildTests = testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS;
-				List<StepResults> result = buildTests.getStepResults();
-				StepResults step = buildTests.getStepResults("Preview");
-				result.add(step);
+			if(buildStepIndex > 0) {
+				fillBuildStepResults(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, "Preview");
 			}
 			if(!baseResponse.isResponseStatus()) {
 				testCaseContext.setTestCaseSuccess(false);
-				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildIndex, "Failed to update taskId status in SalesForce"); 
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildStepIndex, "Failed to update taskId status in SalesForce"); 
 				return;
 			}
 			logger.info("TestCase: ["+testCaseContext.getTestCaseName()+"], Changed task ["+taskId+"] status to \"Assigned\" and task Accpeted - YES");
 			testCaseContext.setTestCaseSuccess(true);
-			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildIndex); 
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildStepIndex); 
 		} catch (Exception e) {
-			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildIndex, "Failed to update taskId status to \"Assigned\" in SalesForce "+e.toString()); 
+			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildStepIndex, "Failed to update taskId status to \"Assigned\" in SalesForce "+e.toString()); 
 			throw e;
 		}	
 	}
 
-	public void adjustTaskIdStatusToDoConsolidationPackage(TestCaseContext testCaseContext, String tasks, int cycleIndex) throws Exception {
+	public void adjustTaskIdStatusToDoConsolidationPackage(TestCaseContext testCaseContext, String tasks, int consolidatedStepIndex) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		try {	
 			String url = propertyComponents.getBuildServiceBaseUrl()+"/test/updateSFStatusForConsolidated?siloName="+propertyComponents.getSiloName()+"&taskIds="+tasks.toString()+"&cycleName=Preview";
@@ -66,16 +63,21 @@ public class SalesForceComponent extends CommonComponent {
 			}.getType();
 			BaseResponse baseResponse = (BaseResponse)restServiceClient.getRestAPICall(logger, url, ResponseModel.class, returnTypeOfObject);
 			testCaseContext.setTestCaseSuccess(baseResponse.isResponseStatus());
+			
+			if(consolidatedStepIndex > 0) {
+				fillBuildStepResults(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, "Preview");
+			}
+			
 			if(!baseResponse.isResponseStatus()) {
 				testCaseContext.setTestCaseSuccess(false);
-				setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, cycleIndex, "Failed to update taskId status to \"Ready to Deploy\" in SalesForce"); 
+				setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, consolidatedStepIndex, "Failed to update taskId status to \"Ready to Deploy\" in SalesForce"); 
 				return;
 			}
 			testCaseContext.setTestCaseSuccess(true);
-			setStepSuccessStatus(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, cycleIndex); 
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, consolidatedStepIndex); 
 			logger.info("TestCase: ["+testCaseContext.getTestCaseName()+"], Changed tasks ["+tasks+"] status to \"Ready to Deploy\"");
 		} catch (Exception e) {
-			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, cycleIndex, "Failed to update taskId status to \"Ready to Deploy\" in SalesForce - "+e.getMessage()); 
+			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, consolidatedStepIndex, "Failed to update taskId status to \"Ready to Deploy\" in SalesForce - "+e.getMessage()); 
 			throw e;
 		}		
 	}
