@@ -110,47 +110,43 @@ public class BuildClientComponent extends ArtifactoryComponent {
 	 * @param taskId
 	 * @param buildTask
 	 */
-	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData,  JSONObject buildTask) throws Exception {
-		try {
-			Logger logger = testCaseContext.getLogger();
-			JSONObject buildAssertValues = buildTask.getJSONObject("buildAssertValues");
-			JSONObject expectedToVerify = buildAssertValues.getJSONObject("expectedToVerify");
-			boolean expectedArtifactsAvailable = expectedToVerify.getBoolean("isArtifactsAvailable");
+	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData,  JSONObject buildTask, int buildsArrayIndex) throws Exception {
+		Logger logger = testCaseContext.getLogger();
+		JSONObject buildAssertValues = buildTask.getJSONObject("buildAssertValues");
+		JSONObject expectedToVerify = buildAssertValues.getJSONObject("expectedToVerify");
+		boolean expectedArtifactsAvailable = expectedToVerify.getBoolean("isArtifactsAvailable");
+		
+		if(actualBuildData.isArtifactsAvailable() && expectedArtifactsAvailable) {
 			JSONArray expectedFilesInPackage = expectedToVerify.getJSONArray("expectedFilesInPackage");
-			if(actualBuildData.isArtifactsAvailable() && expectedArtifactsAvailable) {
-				String buildSuccess = buildAssertValues.getString("buildStatus");
-				String artifactUploadStatus = expectedToVerify.getString("artifactUploadStatus");
-				
-				if(!buildSuccess.equals(actualBuildData.getBuildStatus())) {
-					testCaseContext.setTestCaseSuccess(false);
-					setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected build status: "+buildSuccess+", Actual Build Status: "+actualBuildData.getBuildStatus());
-					return;
-				} else {
-					setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0);
-				}
-				
-				if(!artifactUploadStatus.equals(actualBuildData.getArtifactUploadStatus())) {
-					testCaseContext.setTestCaseSuccess(false);
-					setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected upload artifacts status: "+artifactUploadStatus+", Actual upload artifacts Status: "+actualBuildData.getArtifactUploadStatus());
-					return;
-				}
-				logger.info("BuildResults: :: "+actualBuildData.toString());
-				verifyBuildPackage(testCaseContext, taskId, actualBuildData.getBuildNumber(), expectedFilesInPackage);
-			} else {
+			String buildSuccess = buildAssertValues.getString("buildStatus");
+			String artifactUploadStatus = expectedToVerify.getString("artifactUploadStatus");
+			
+			if(!buildSuccess.equals(actualBuildData.getBuildStatus())) {
 				testCaseContext.setTestCaseSuccess(false);
-				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, 0, "Expected artifacts ="+expectedArtifactsAvailable+", actually artifacts - "+actualBuildData.isArtifactsAvailable());
+				setStepFailedValues(testCaseContext.getBuildTestStats(), buildsArrayIndex, "Expected build status: "+buildSuccess+", Actual Build Status: "+actualBuildData.getBuildStatus());
+				return;
+			} else {
+				setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, buildsArrayIndex);
 			}
-		} catch(Exception e) {
-			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE_TASKIDS_STATUS, 0, "Failed to do build assert "+e.getMessage()); 
-			throw e;
+			
+			if(!artifactUploadStatus.equals(actualBuildData.getArtifactUploadStatus())) {
+				testCaseContext.setTestCaseSuccess(false);
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, buildsArrayIndex, "Expected upload artifacts status: "+artifactUploadStatus+", Actual upload artifacts Status: "+actualBuildData.getArtifactUploadStatus());
+				return;
+			}
+			
+			verifyBuildPackage(testCaseContext, taskId, actualBuildData.getBuildNumber(), expectedFilesInPackage);
+			
+		} else if(actualBuildData.isArtifactsAvailable() == expectedArtifactsAvailable) {
+			testCaseContext.setTestCaseSuccess(true);
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, buildsArrayIndex);
+		} else {
+			testCaseContext.setTestCaseSuccess(false);
+			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_STATUS_CHECK, buildsArrayIndex, "Expected artifacts ="+expectedArtifactsAvailable+", actually artifacts - "+actualBuildData.isArtifactsAvailable());
 		}
 	}
 
 	
-
-	/**
-	 * @param testCaseContext
-	 */
 	public BuildData waitForBuildCompleteAndGetBuildResults(TestCaseContext testCaseContext, String taskId, Long previousBuildNumber) throws Exception {
 		int attempts = 1;
 		BuildData buildData = null;

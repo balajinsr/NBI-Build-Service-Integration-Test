@@ -4,6 +4,7 @@
 package com.ca.nbiapps.core.compnents;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 import com.ca.nbiapps.build.client.RestServiceClient;
 import com.ca.nbiapps.build.model.BaseResponse;
 import com.ca.nbiapps.build.model.ResponseModel;
+import com.ca.nbiapps.build.model.StepResults;
+import com.ca.nbiapps.build.model.StepResults.BuildTestStats;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,23 +31,29 @@ public class SalesForceComponent extends CommonComponent {
 	@Autowired
 	RestServiceClient restServiceClient;
 	
-	public void adjustTaskIdStatusForAcceptTheBuild(TestCaseContext testCaseContext, String taskId) throws Exception {
+	public void adjustTaskIdStatusForAcceptTheBuild(TestCaseContext testCaseContext, String taskId, int buildIndex) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		try {
 			String url = propertyComponents.getBuildServiceBaseUrl()+"/test/updateSFStatusForBuild?siloName="+propertyComponents.getSiloName()+"&taskId="+taskId+"&cycleName=Preview";
 			Type returnTypeOfObject = new TypeToken<BaseResponse>() {
 			}.getType();
 			BaseResponse baseResponse = (BaseResponse)restServiceClient.getRestAPICall(logger, url, ResponseModel.class, returnTypeOfObject);
+			if(buildIndex > 0) {
+				BuildTestStats buildTests = testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS;
+				List<StepResults> result = buildTests.getStepResults();
+				StepResults step = buildTests.getStepResults("Preview");
+				result.add(step);
+			}
 			if(!baseResponse.isResponseStatus()) {
 				testCaseContext.setTestCaseSuccess(false);
-				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, 0, "Failed to update taskId status in SalesForce"); 
+				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildIndex, "Failed to update taskId status in SalesForce"); 
 				return;
 			}
 			logger.info("TestCase: ["+testCaseContext.getTestCaseName()+"], Changed task ["+taskId+"] status to \"Assigned\" and task Accpeted - YES");
 			testCaseContext.setTestCaseSuccess(true);
-			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, 0); 
+			setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildIndex); 
 		} catch (Exception e) {
-			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, 0, "Failed to update taskId status to \"Assigned\" in SalesForce "+e.toString()); 
+			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_ADJUST_TASKID_STATUS, buildIndex, "Failed to update taskId status to \"Assigned\" in SalesForce "+e.toString()); 
 			throw e;
 		}	
 	}

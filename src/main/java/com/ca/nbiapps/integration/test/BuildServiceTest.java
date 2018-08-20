@@ -1,14 +1,9 @@
 package com.ca.nbiapps.integration.test;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.ITestContext;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.ca.nbiapps.build.model.StepResults;
@@ -30,17 +25,12 @@ public class BuildServiceTest extends BaseTest {
 	@Autowired
 	GitComponent gitComponent;
 
-	public Map<String, BuildTestStats> results;
-	@BeforeSuite
-	public void beforeSuite() {
-		results = new LinkedHashMap<>();
-	}
-
 	@Test
 	public void process(final ITestContext testContext) {
 		Logger logger = null;
 		TestCaseContext testCaseContext = new TestCaseContext();
 		String testCaseName = testContext.getCurrentXmlTest().getName();
+		
 		try {
 			logger = gitComponent.getLogger("Integration-Test-Log", "INFO");
 			logger.info("====================="+testCaseName+"========================== Start");
@@ -56,29 +46,44 @@ public class BuildServiceTest extends BaseTest {
 		} finally {
 			logger.info("TestCaseName: [" + testCaseContext.getTestCaseName() + "], TestCaseStatus: [" + testCaseContext.isTestCaseSuccess() + "]");		
 			try {
-				results.put(testCaseName, testCaseContext.getBuildTestStats());
+				printTestResults(testCaseContext);
 				testCaseService.reset(testCaseContext);
 			} catch (Exception e) {
 				handleException(logger, e);
 				org.testng.Assert.assertTrue(false);
 			}
-			printTestResults(logger);
+			
 			logger.info("====================="+testCaseName+"========================== End");
 		}
 	}
 
 	
-	public void printTestResults(Logger logger) {
-		Iterator<String> it = results.keySet().iterator();
-		while (it.hasNext()) {
-			String testCaseName = it.next();
-			BuildTestStats buildTestStats = results.get(testCaseName);
-			for (BuildTestStats buildTestStat : buildTestStats.values()) {
-				for (StepResults step : buildTestStat.getStepResults()) {				
+	public void printTestResults(TestCaseContext testCaseContext) {
+		Logger logger = testCaseContext.getLogger();
+		BuildTestStats buildTestStats = testCaseContext.getBuildTestStats();
+		for (BuildTestStats buildTestStat : buildTestStats.values()) {
+			for (StepResults step : buildTestStat.getStepResults()) {		
+				if(isPromotedApproval(testCaseContext, step.getCycleName())) {
 					logger.info(step.toString());
 				}
-
 			}
+
 		}
+	}
+
+	private boolean isPromotedApproval(TestCaseContext testCaseContext, String cycleName) {
+		if("Preview".equalsIgnoreCase(cycleName)) return true;
+		JSONObject jsonTemplateObject = testCaseContext.getTestCaseData();
+		boolean promotedApproval = false;
+		if("ValFac".equalsIgnoreCase(cycleName)) {
+			JSONObject jsonObject = (JSONObject) jsonTemplateObject.getJSONObject("promoteToValFac");
+			promotedApproval = (boolean)jsonObject.get("promotedApproval");
+		}
+		
+		if(promotedApproval && "Production".equalsIgnoreCase(cycleName)) {
+			JSONObject jsonObject = (JSONObject) jsonTemplateObject.getJSONObject("promoteToProduction");
+			promotedApproval = (boolean)jsonObject.get("promotedApproval");
+		}
+		return promotedApproval;
 	}
 }

@@ -39,8 +39,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 	@Override
 	public void process(TestCaseContext testCaseContext) throws Exception {
+		Logger logger = testCaseContext.getLogger();
 		JSONObject testCaseData = testCaseContext.getTestCaseData();
-		JSONArray developerTasks = testCaseData.getJSONArray("developerTasks");
+		JSONArray developerBuildTasks = testCaseData.getJSONArray("developer-build-Tasks");
 		String baseGitCommitSHAId = gitComponent.getLastestCommitId();
 		testCaseContext.setBaseGitCommitId(baseGitCommitSHAId);
 		testCaseContext.setHeadGitCommitId(baseGitCommitSHAId);
@@ -50,40 +51,43 @@ public class TestCaseServiceImpl implements TestCaseService {
 		
 		// gitTaskCheck, buildProcessCheck, buildStatusCheck,
 		// buildconsolidationProcessCheck, buildConsolidationCheck
-		for (int i = 0; i < developerTasks.length(); i++) {
-			JSONObject buildObj = developerTasks.getJSONObject(i);
-			String taskId = buildObj.getString("taskId");
-			JSONArray buildTasks = buildObj.getJSONArray("builds");
-
-			salesForceComponent.adjustTaskIdStatusForAcceptTheBuild(testCaseContext, taskId);
+		for (int i = 0; i < developerBuildTasks.length(); i++) {
+			JSONObject buildTask = developerBuildTasks.getJSONObject(i);
+			String taskId = buildTask.getString("taskId");
+			
+			salesForceComponent.adjustTaskIdStatusForAcceptTheBuild(testCaseContext, taskId, i);
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
-			for (int j = 0; j < buildTasks.length(); j++) {
-				JSONObject buildTask = buildTasks.getJSONObject(i);
-				gitComponent.processDeveloperGitTask(testCaseContext, taskId, buildTask);
-				if(!testCaseContext.isTestCaseSuccess()) {
-					return;
-				}
-				String headGitCommitSHAId = gitComponent.getLastestCommitId();
-				testCaseContext.setHeadGitCommitId(headGitCommitSHAId);
-				Long previousBuildNumber = buildClientComponent.getPreviousBuildNumber(testCaseContext.getLogger());			
-				buildClientComponent.pullRequest(testCaseContext, taskId);
-				if(!testCaseContext.isTestCaseSuccess()) {
-					return;
-				}
-				BuildData buildData = buildClientComponent.waitForBuildCompleteAndGetBuildResults(testCaseContext, taskId, previousBuildNumber);
-				if(!testCaseContext.isTestCaseSuccess()) {
-					return;
-				}
 				
-				buildClientComponent.doBuildAssert(testCaseContext, taskId, buildData, buildTask);
-				if(!testCaseContext.isTestCaseSuccess()) {
-					return;
-				}
+			gitComponent.processDeveloperGitTask(testCaseContext, taskId, buildTask, i);
+			if(!testCaseContext.isTestCaseSuccess()) {
+				return;
 			}
+			String headGitCommitSHAId = gitComponent.getLastestCommitId();
+			testCaseContext.setHeadGitCommitId(headGitCommitSHAId);
+			Long previousBuildNumber = buildClientComponent.getPreviousBuildNumber(testCaseContext.getLogger());			
+			buildClientComponent.pullRequest(testCaseContext, taskId);
+			if(!testCaseContext.isTestCaseSuccess()) {
+				return;
+			}
+			BuildData buildData = buildClientComponent.waitForBuildCompleteAndGetBuildResults(testCaseContext, taskId, previousBuildNumber);
+			logger.info("BuildResults: :: "+buildData.toString());
+			if(!testCaseContext.isTestCaseSuccess()) {
+				return;
+			}
+			
+			buildClientComponent.doBuildAssert(testCaseContext, taskId, buildData, buildTask, i);
+			if(!testCaseContext.isTestCaseSuccess()) {
+				return;
+			}
+			
 		}
 
+		if(!testCaseContext.isTestCaseSuccess()) {
+			return;
+		}
+		
 		// consolidationProcessCheck, consolidationPackageCheck,
 		// consolidationDBCheck, consolidationManifestCheck
 		boolean doConsolidateCheck = testCaseData.getBoolean("doConsolidationCheck");
@@ -93,12 +97,12 @@ public class TestCaseServiceImpl implements TestCaseService {
 				JSONObject consolidation = consolidationList.getJSONObject(i);
 				JSONArray tasks = consolidation.getJSONArray("taskIds");
 
-				boolean atLeastOneBuildContainsPackage = consolidation.getBoolean("atLeastOneBuildContainsPackage");
-				if (atLeastOneBuildContainsPackage) {
+				boolean isArtifactsAvailable = consolidation.getBoolean("isArtifactsAvailable");
+				boolean isDeleteInstructionsAvailable = consolidation.getBoolean("isDeleteInstructionsAvailable");
+				if (isArtifactsAvailable || isDeleteInstructionsAvailable) {
 					boolean doTaskStatusChangeAuto = consolidation.getBoolean("doTaskStatusChangeAuto");
 					String taskIds = consolidationComponent.getConsolidatedTaskIds(tasks);
-					if (doTaskStatusChangeAuto) {
-						
+					if (doTaskStatusChangeAuto) {						
 						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, taskIds, 0);
 						if(!testCaseContext.isTestCaseSuccess()) {
 							return;
@@ -108,8 +112,13 @@ public class TestCaseServiceImpl implements TestCaseService {
 					if(!testCaseContext.isTestCaseSuccess()) {
 						return;
 					}
-					JSONArray expectedFilesInPackage = consolidation.getJSONArray("expectedFilesInPackage");
-					consolidationComponent.verifyConsolidationPackage(testCaseContext, "Preview", releaseId, expectedFilesInPackage);
+					
+					if(!isDeleteInstructionsAvailable) {
+						JSONArray expectedFilesInPackage = consolidation.getJSONArray("expectedFilesInPackage");
+						consolidationComponent.verifyConsolidationPackage(testCaseContext, "Preview", releaseId, expectedFilesInPackage);
+					} else {
+						testCaseContext.setTestCaseSuccess(true);
+					}
 					if(!testCaseContext.isTestCaseSuccess()) {
 						return;
 					}	
@@ -128,7 +137,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 		boolean rebaseOrigin = (boolean) jsonTemplateObject.get("rebase-origin");
 		String baseGitCommitId = testCaseContext.getBaseGitCommitId();
 		String headGitCommitId = testCaseContext.getHeadGitCommitId();
-		logger.info("Rebase the git state from SHAID- "+headGitCommitId+", to SHAID"+baseGitCommitId);
+		logger.info("Rebase the git state from shaId-"+headGitCommitId+", to shaId - "+baseGitCommitId);
 		if(!baseGitCommitId.equals(headGitCommitId)) {
 			gitComponent.gitResetHard(logger, baseGitCommitId);
 			if (rebaseOrigin) {

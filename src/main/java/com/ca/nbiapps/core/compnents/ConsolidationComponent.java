@@ -64,6 +64,7 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 			testCaseContext.setTestCaseSuccess(false);
 			setStepFailedValues(testCaseContext.getBuildTestStats().CON_PACKAGE, 0, "Consolidation packate generation failed");
 		}
+		
 		return "";
 	}
 

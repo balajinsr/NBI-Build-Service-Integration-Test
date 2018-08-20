@@ -1,40 +1,38 @@
 {
-  "developerTasks": [
+  "developer-build-Tasks": [
     {
       "taskId": "DT-000051918",
-      "builds": [
+      "commitFileList": [
         {
-          "commitFileList": [
+          "filePath": "SILO/acspage/OTP_Auth/firstTest.html",
+          "action": "add",
+          "md5Value": "bbd636bad4c05715566999fd407b8897"
+        }
+      ],
+      "buildAssertValues": {
+        "buildStatus": "Build Success",
+        "expectedToVerify": {  
+          "isArtifactsAvailable" : true,
+          "verifyDBEntries": false,
+          "artifactUploadStatus": "Upload Success",
+          "expectedFilesInPackage": [
             {
-              "filePath": "SILO/acspage/OTP_Auth/firstTest.html",
-              "action": "add",
+              "filePath": "nbiservice-acspage/acspage/OTP_Auth/firstTest.html",
               "md5Value": "bbd636bad4c05715566999fd407b8897"
             }
           ],
-          "buildAssertValues": {
-            "buildStatus": "Build Success",
-            "expectedToVerify": {  
-              "isArtifactsAvailable" : true,
-              "artifactUploadStatus": "Upload Success",
-              "expectedFilesInPackage": [
-                {
-                  "filePath": "nbiservice-acspage/acspage/OTP_Auth/firstTest.html",
-                  "md5Value": "bbd636bad4c05715566999fd407b8897"
-                }
-              ],
-              "expectedEntriesInDB": [
-                {
-                  "filePath": "acspage/OTP_Auth/firstTest.html",
-                  "md5Value": "bbd636bad4c05715566999fd407b8897",
-                  "action": "add"
-                }
-              ]
+          "expectedEntriesInDB": [
+            {
+              "filePath": "acspage/OTP_Auth/firstTest.html",
+              "md5Value": "bbd636bad4c05715566999fd407b8897",
+              "action": "add"
             }
-          }
+          ]
         }
-      ]
+      }
     }
   ],
+  
   "doConsolidationCheck": true,
   "consolidationAssertList": [
     {
@@ -42,8 +40,10 @@
         "DT-000051918"
       ],
       "doTaskStatusChangeAuto": true,
-      "atLeastOneBuildContainsPackage": true,
-      "checkReleaseEntryInDB": true,
+      "isArtifactsAvailable": false,
+      "verifyManifest": false,
+      "verifyDBEntries": false,
+      "isDeleteInstructionsAvailable":true,
       "expectedFilesInPackage": [
         {
           "filePath": "nbiservice-acspage/acspage/OTP_Auth/firstTest.html",

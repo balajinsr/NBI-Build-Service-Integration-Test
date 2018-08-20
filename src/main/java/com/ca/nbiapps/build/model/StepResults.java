@@ -1,5 +1,8 @@
 package com.ca.nbiapps.build.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Generated;
 
 /**
@@ -13,6 +16,8 @@ public class StepResults {
 	private String stepStatus = "Skipped";
 	private String reason;
 
+	public StepResults() {
+	}
 	@Generated("SparkTools")
 	private StepResults(Builder builder) {
 		this.cycleName = builder.cycleName;
@@ -60,36 +65,42 @@ public class StepResults {
 	}
 	
 	public enum BuildTestStats {
-		BUILD_ADJUST_TASKID_STATUS(getBuildStepResult()), BUILD_GIT_TASK(getBuildStepResult()), BUILD_PULL_REQUEST(getBuildStepResult()), BUILD_RESULT_FETCH(getBuildStepResult()), BUILD_STATUS_CHECK(getBuildStepResult()), BUILD_PACKAGE_DOWNLOAD(getBuildStepResult()), BUILD_PACKAGE_ASSERT(getBuildStepResult()), BUILD_DBENTRIES_ASSERT(getBuildStepResult()),
+		BUILD_ADJUST_TASKID_STATUS(getBuildStepList("Preview")), BUILD_GIT_TASK(getBuildStepList("Preview")), BUILD_PULL_REQUEST(getBuildStepList("Preview")), BUILD_RESULT_FETCH(getBuildStepList("Preview")), BUILD_STATUS_CHECK(getBuildStepList("Preview")), BUILD_PACKAGE_DOWNLOAD(getBuildStepList("Preview")), BUILD_PACKAGE_ASSERT(getBuildStepList("Preview")), BUILD_DBENTRIES_ASSERT(getBuildStepList("Preview")),
 		CON_PACKAGE_TASKIDS_STATUS(getDeployPackStepResults()),CON_PACKAGE(getDeployPackStepResults()), CON_PACKAGE_DOWNLOAD(getDeployPackStepResults()), CON_PACKAGE_ASSERT(getDeployPackStepResults()), CON_MANIFEST_ASSERT(getDeployPackStepResults());
 
-		private BuildTestStats(StepResults... stepResults) {
+		private BuildTestStats(List<StepResults> stepResults) {
 			for (StepResults step : stepResults) {
 				step.setStepName(this.name());
 			}
 			this.stepResults = stepResults;
 		}
-		StepResults[] stepResults;
 		
-		public StepResults[] getStepResults() {
+		List<StepResults> stepResults;
+		
+		public List<StepResults> getStepResults() {
 			return stepResults;
 		}
 
-		public void setStepResults(StepResults[] stepResults) {
+		public void setStepResults(List<StepResults> stepResults) {
 			this.stepResults = stepResults;
 		}
 
-		private static StepResults getStepResult(String cycleName) {
-			return new Builder().withCycleName(cycleName).withStepStatus("Skipped").withReason("").build();
-		}
-
-		private static StepResults getBuildStepResult() {
-			return new Builder().withCycleName("Preview").withStepStatus("Skipped").withReason("").build();
+		public static List<StepResults> getBuildStepList(String cycleName) {
+			List<StepResults> results = new ArrayList<>();
+			results.add(new Builder().withCycleName(cycleName).withStepStatus("Skipped").withReason("").build());
+			return results;
 		}
 		
-		private static StepResults[] getDeployPackStepResults() {
-			StepResults[] steps = { getStepResult("Preview"), getStepResult("ValFac"), getStepResult("Production") };
-			return steps;
+		public static StepResults getStepResults(String cycleName) {
+			return new Builder().withCycleName(cycleName).withStepStatus("Skipped").withReason("").build();
+		}
+		
+		public static List<StepResults> getDeployPackStepResults() {
+			List<StepResults> results = new ArrayList<>();
+			results.add(getStepResults("Preview"));
+			results.add(getStepResults("ValFac"));
+			results.add(getStepResults("Production"));
+			return results;
 		}
 	}
 

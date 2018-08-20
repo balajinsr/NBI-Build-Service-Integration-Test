@@ -291,7 +291,7 @@ public class GitComponent extends CommonComponent {
 
 	
 
-	public void processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
+	public void processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask, int buildStepIndex) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		try {
 			boolean isCloneSuccess = cloneRepo(logger)?true:false;
@@ -313,6 +313,7 @@ public class GitComponent extends CommonComponent {
 	}
 
 	public boolean doGitLocalChanges(TestCaseContext testCaseContext, JSONObject buildTask) throws Exception {
+		String testCaseName = testCaseContext.getTestCaseName();
 		JSONArray commitFileList = buildTask.getJSONArray("commitFileList");
 		String srcBasePath = propertyComponents.getTestDataBasePath();
 		String destBasePath = propertyComponents.getLocalForkReopDir();
@@ -321,14 +322,15 @@ public class GitComponent extends CommonComponent {
 			JSONObject fileObj = commitFileList.getJSONObject(j);
 			String fromPath = fileObj.getString("filePath");
 			String action = fileObj.getString("action");
-			String md5Value = fileObj.getString("md5Value");
-			Path from = getPathByOSSpecific(srcBasePath + File.separator + fromPath);
+			
+			Path from = getPathByOSSpecific(srcBasePath + File.separator + testCaseName+ File.separator + fromPath);
 			Path to = getPathByOSSpecific(destBasePath + File.separator + fromPath);
 
 			if (action.equalsIgnoreCase("delete")) {
 				Files.delete(to);
 				gitRemove(fromPath);
 			} else {
+				String md5Value = fileObj.getString("md5Value");
 				Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
 				changeFileStatus = checkMd5(md5Value, to);
 				if (!changeFileStatus) {

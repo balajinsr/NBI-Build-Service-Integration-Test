@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ca.nbiapps.build.model.StepResults;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.build.model.StepResults.BuildTestStats;
 import com.ca.nbiapps.common.logger.AsynchLogger;
@@ -119,7 +121,12 @@ public class CommonComponent {
 			JSONObject object = expectedFilesInPackage.getJSONObject(i);
 			expectedFileInPackage = new File(saveLocalDir + "/" + object.getString("filePath"));
 			String expectedMd5Value = object.getString("md5Value");
-			String actualMd5Value = getMD5Sum(expectedFileInPackage);
+			
+			String actualMd5Value = null;
+			if(expectedFileInPackage.exists()) {
+				actualMd5Value = getMD5Sum(expectedFileInPackage);
+			}
+			
 			if (expectedFileInPackage.exists() && expectedMd5Value.equals(actualMd5Value)) {
 				testCaseContext.setTestCaseSuccess(true);
 				setStepSuccessStatus(stepStats, stepArrayIndex);
@@ -141,24 +148,30 @@ public class CommonComponent {
 	}
 	
 	public void setStepFailedStatus(BuildTestStats stepStats, int stepArrayIndex) {
-		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Failed");
+		stepStats.getStepResults().get(stepArrayIndex).setStepStatus("Failed");
 	}
 	
 	public void setStepSuccessStatus(BuildTestStats stepStats, int stepArrayIndex) {
-		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Success");
+		stepStats.getStepResults().get(stepArrayIndex).setStepStatus("Success");
 	}
 	
 	public void setStepReason(BuildTestStats stepStats, int stepArrayIndex, String stepReason) {
-		stepStats.getStepResults()[stepArrayIndex].setReason(stepReason);
+		stepStats.getStepResults().get(stepArrayIndex).setReason(stepReason);
 	}
 	
 	public void setStepFailedValues(BuildTestStats stepStats, int stepArrayIndex, String stepReason) {
-		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Failed");
-		stepStats.getStepResults()[stepArrayIndex].setReason(stepReason);
+		stepStats.getStepResults().get(stepArrayIndex).setStepStatus("Failed");
+		stepStats.getStepResults().get(stepArrayIndex).setReason(stepReason);
 	}
 	
 	public void setStepSuccessValues(BuildTestStats stepStats, int stepArrayIndex, String stepReason) {
-		stepStats.getStepResults()[stepArrayIndex].setStepStatus("Success");
-		stepStats.getStepResults()[stepArrayIndex].setReason(stepReason);
+		stepStats.getStepResults().get(stepArrayIndex).setStepStatus("Success");
+		stepStats.getStepResults().get(stepArrayIndex).setReason(stepReason);
+	}
+	
+	public void fillBuildStepResults(BuildTestStats stepStats, String cycleName) {
+		List<StepResults> result = stepStats.getStepResults();
+		StepResults step = stepStats.getStepResults(cycleName);
+		result.add(step);
 	}
 }

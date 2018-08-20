@@ -13,53 +13,59 @@ public class PropertyComponents {
 
 	// git properties - start
 	@Value("${integration.test.silo_name}")
-	public String siloName;
+	private String siloName;
 
 	@Value("${integration.test.git_username}")
-	public String gitUserName;
+	private String gitUserName;
 
 	@Value("${integration.test.local_fork_repo_dir}")
-	public String localForkReopDir;
+	private String localForkReopDir;
 
 	@Value("${integration.test.git_fork_ssh_url}")
-	public String gitForkSshUrl;
+	private String gitForkSshUrl;
 
 	@Value("${integration.test.git_upstream_ssh_url}")
-	public String gitUpstreamSshUrl;
+	private String gitUpstreamSshUrl;
 	// git properties - end
 
 	// logger properties - start
 	@Value("${integration.test.log_location_path}")
-	public String logLocationPath;
+	private String logLocationPath;
 	// logger properties - end
 
 	// build service data and urls - start
 	@Value("${integration.test.test_data_base_path}")
-	public String testDataBasePath;
+	private String testDataBasePath;
 
 	@Value("${integration.test.build_service_base_url}")
-	public String buildServiceBaseUrl;
+	private String buildServiceBaseUrl;
 	// build service data and urls - end
 
 	// artifactory properties - start
 	@Value("${integration.test.maven_repo_name}")
-	public String mavenRepoName;
+	private String mavenRepoName;
 
 	@Value("${integration.test.artifactory_base_url}")
-	public String artifactoryBaseUrl;
+	private String artifactoryBaseUrl;
 
 	@Value("${integration.test.artifactory_apistore_base_url}")
-	public String artifactoryApiStoreBaseUrl;
+	private String artifactoryApiStoreBaseUrl;
 
 	@Value("${integration.test.artifacts_downloaded_local_dir}")
-	public String artifactoryDownloadLocalDir;
+	private String artifactoryDownloadLocalDir;
 	
 	@Value("${integration.test.artifactory_username}")
-	public String artifactoryUsername;
+	private String artifactoryUsername;
 	
 	@Value("${integration.test.artifactory_password}")
-	public String artifactoryPassword;
+	private String artifactoryPassword;
 	
+	
+	@Value("${integration.test.externalService.connectiontimeout}")
+	public String connectionTimeOut;
+	
+	@Value("${integration.test.externalService.readtimeout}")
+	public String readtimeout;
 	// artifactory properties - end
 
 	public String getSiloName() {
@@ -174,5 +180,21 @@ public class PropertyComponents {
 
 	public void setArtifactoryPassword(String artifactoryPassword) {
 		this.artifactoryPassword = artifactoryPassword;
+	}
+
+	public String getConnectionTimeOut() {
+		return connectionTimeOut;
+	}
+
+	public void setConnectionTimeOut(String connectionTimeOut) {
+		this.connectionTimeOut = connectionTimeOut;
+	}
+
+	public String getReadtimeout() {
+		return readtimeout;
+	}
+
+	public void setReadtimeout(String readtimeout) {
+		this.readtimeout = readtimeout;
 	}
 }

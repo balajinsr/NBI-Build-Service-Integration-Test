@@ -1,0 +1,74 @@
+{
+  "developer-build-Tasks": [
+    {
+      "taskId": "DT-000051918",
+      "commitFileList": [
+        {
+          "filePath": "SILO/acspage/OTP_Auth/hrtnbase.htm",
+          "action": "update",
+          "md5Value": "af0648b6936534412da3426bd1c1fd05"
+        }
+      ],
+      "buildAssertValues": {
+        "buildStatus": "Build Success",
+        "expectedToVerify": {
+          "isArtifactsAvailable" : true,
+          "verifyDBEntries": false,
+          "artifactUploadStatus": "Upload Success",
+          "expectedFilesInPackage": [
+            {
+              "filePath": "nbiservice-acspage/acspage/OTP_Auth/hrtnbase.htm",
+              "md5Value": "af0648b6936534412da3426bd1c1fd05"
+            }
+          ],
+          "expectedEntriesInDB": [
+            {
+              "filePath": "acspage/OTP_Auth/hrtnbase.htm",
+              "md5Value": "af0648b6936534412da3426bd1c1fd05",
+              "action": "update"
+            }
+          ]
+        }
+      }
+    }
+   ],
+   
+  "doConsolidationCheck": true,
+  "consolidationAssertList": [
+    {
+      "taskIds": [
+        "DT-000051918"
+      ],
+       "doTaskStatusChangeAuto": true,
+      "isArtifactsAvailable": false,
+      "verifyManifest": false,
+      "verifyDBEntries": false,
+      "isDeleteInstructionsAvailable":true,
+      "expectedFilesInPackage": [
+        {
+          "filePath": "nbiservice-acspage/acspage/OTP_Auth/hrtnbase.htm",
+          "md5Value": "af0648b6936534412da3426bd1c1fd05"
+        }
+      ],
+      
+      "expectedEntriesInManifestXML": [
+      {
+        "filePath": "acspage/OTP_Auth/hrtnbase.htm",
+        "md5Value": "af0648b6936534412da3426bd1c1fd05",
+        "action": "update"
+      }
+      ]
+    }
+  ],
+  "promoteToValFac":{
+  	  "promotedApproval": false,
+      "adjustTaskIdStatusAuto":true
+   },
+   "promoteToProduction":{
+      "promotedApproval": true,
+      "adjustTaskIdStatusAuto":true
+   },
+  "rebase-origin": true,
+  "resetDB": true,
+  "rebase-upstream": true
+}
