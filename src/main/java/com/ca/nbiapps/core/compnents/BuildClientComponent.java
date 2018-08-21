@@ -180,7 +180,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 		StepResults stepResults = getStepResult("Preview");
 		String stepName = BuildTestStats.BUILD_RESULT_FETCH.name();
 		try {
-			while (attempts <= 3) {
+			while (attempts <= 10) {
 				try {
 					Thread.sleep(15000L);
 					previousBuildNumber = previousBuildNumber == null ? 992 : previousBuildNumber;

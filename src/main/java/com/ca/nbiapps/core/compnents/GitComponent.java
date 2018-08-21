@@ -32,6 +32,7 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.Transport;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -186,14 +187,25 @@ public class GitComponent extends CommonComponent {
 		}
 		return false;
 	}
+	
+	public void log(Logger logger, RevCommit commit) throws Exception {
+		try (Git git = getGit(); TreeWalk treeWalk = new TreeWalk(git.getRepository())) {
+			treeWalk.reset(commit.getId() );
+			while (treeWalk.next()) {
+				String path = treeWalk.getPathString();
+				logger.info(path);
+			}
+		}
+	}
 
-	public void doGitLocalCommit(String commentMessage) throws Exception {
+	public RevCommit doGitLocalCommit(Logger logger, String commentMessage) throws Exception {
 		String localRepoDir = propertyComponents.getLocalForkReopDir();
 		if (localRepoDir != null) {
 			try (Git git = Git.open(new File(localRepoDir))) {
-				git.commit().setMessage(commentMessage).call();
+				return git.commit().setMessage(commentMessage).call();
 			}
 		}
+		return null;
 	}
 
 	public void gitRemove(String filepattern) throws Exception {
@@ -300,7 +312,9 @@ public class GitComponent extends CommonComponent {
 		try {
 			boolean isCloneSuccess = cloneRepo(logger)?true:false;
 			if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
-				doGitLocalCommit(taskId);
+				RevCommit revCommit = doGitLocalCommit(logger, taskId);
+				
+				
 				gitPush(logger, false, "origin");
 				
 				testCaseContext.setTestCaseSuccess(true);
@@ -337,6 +351,7 @@ public class GitComponent extends CommonComponent {
 				gitRemove(fromPath);
 			} else {
 				String md5Value = fileObj.getString("md5Value");
+				Files.createDirectories(to.getParent());
 				Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
 				changeFileStatus = checkMd5(md5Value, to);
 				if (!changeFileStatus) {

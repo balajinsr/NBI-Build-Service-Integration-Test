@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Build-Service-Tests" parallel="false">
-  <!-- <test name="ACSPage-add-Test" preserve-order="true">
+   
+  <!--  <test name="ACSPage-add-Test" preserve-order="true">
     <classes>
       <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
     </classes>
@@ -11,11 +12,18 @@
     <classes>
       <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
     </classes>
-  </test> -->
+  </test> 
   
   <test name="ACSPage-delete-Test" preserve-order="true">
     <classes>
       <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
     </classes>
-  </test>  
+  </test>-->
+  
+   <test name="APPSERVER-AddIssuerModule-Test" preserve-order="true">
+    <classes>
+      <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
+    </classes>
+  </test>
+   
 </suite>

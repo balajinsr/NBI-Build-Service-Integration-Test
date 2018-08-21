@@ -52,6 +52,10 @@ public class ArtifactoryComponent extends CommonComponent {
 	    }
 		Path path = Paths.get(uri);
 		if(path.getFileName() != null) {
+			
+			if(path.getFileName().toString().contains("-appserver")) {
+				return "";
+			}
 			return path.getFileName().toString().replace(".zip", "");
 		}
 		return "";
