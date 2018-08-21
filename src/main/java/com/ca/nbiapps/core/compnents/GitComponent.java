@@ -38,6 +38,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ca.nbiapps.build.model.BuildTestStats;
+import com.ca.nbiapps.build.model.StepResults;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -291,27 +293,28 @@ public class GitComponent extends CommonComponent {
 
 	
 
-	public void processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask, int buildStepIndex) throws Exception {
+	public void processDeveloperGitTask(TestCaseContext testCaseContext, String taskId, JSONObject buildTask) throws Exception {
 		Logger logger = testCaseContext.getLogger();
+		StepResults stepResults = getStepResult("Preview");
+		String stepName = BuildTestStats.BUILD_GIT_TASK.name();
 		try {
 			boolean isCloneSuccess = cloneRepo(logger)?true:false;
-			
-			if(buildStepIndex > 0) fillBuildStepResults(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, "Preview");
-			
 			if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
 				doGitLocalCommit(taskId);
 				gitPush(logger, false, "origin");
 				
 				testCaseContext.setTestCaseSuccess(true);
 				logger.info("Git changes and commit task completed.");
-				setStepSuccessStatus(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, 0);
+				setStepSuccessValues(stepName, stepResults);
 			} else {
 				testCaseContext.setTestCaseSuccess(false);
-				setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, 0, "No git changes pushed to git");
+				setStepFailedValues(stepName, "No git changes pushed to git", stepResults);
 			}
 		} catch(Exception e) {
-			setStepFailedValues(testCaseContext.getBuildTestStats().BUILD_GIT_TASK, 0, "git changed and push error - "+e.getMessage());
+			setStepFailedValues(stepName, "git changed and push error - "+e.getMessage(), stepResults);
 			throw e;
+		} finally {
+			testCaseContext.getStepResults().add(stepResults);
 		}
 	}
 
@@ -341,7 +344,6 @@ public class GitComponent extends CommonComponent {
 				}
 				gitAdd(fromPath);
 			}
-
 		}
 		return true;
 	}
@@ -350,4 +352,7 @@ public class GitComponent extends CommonComponent {
 		String fileMd5Value = getMD5Sum(to.toFile());
 		return fileMd5Value.equals(md5Value);
 	}
+
+	
+	
 }

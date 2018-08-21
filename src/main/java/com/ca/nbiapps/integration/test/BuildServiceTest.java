@@ -7,7 +7,6 @@ import org.testng.ITestContext;
 import org.testng.annotations.Test;
 
 import com.ca.nbiapps.build.model.StepResults;
-import com.ca.nbiapps.build.model.StepResults.BuildTestStats;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.core.compnents.GitComponent;
 import com.ca.nbiapps.service.TestCaseService;
@@ -52,7 +51,6 @@ public class BuildServiceTest extends BaseTest {
 				handleException(logger, e);
 				org.testng.Assert.assertTrue(false);
 			}
-			
 			logger.info("====================="+testCaseName+"========================== End");
 		}
 	}
@@ -60,14 +58,10 @@ public class BuildServiceTest extends BaseTest {
 	
 	public void printTestResults(TestCaseContext testCaseContext) {
 		Logger logger = testCaseContext.getLogger();
-		BuildTestStats buildTestStats = testCaseContext.getBuildTestStats();
-		for (BuildTestStats buildTestStat : buildTestStats.values()) {
-			for (StepResults step : buildTestStat.getStepResults()) {		
-				if(isPromotedApproval(testCaseContext, step.getCycleName())) {
-					logger.info(step.toString());
-				}
+		for (StepResults stepResult : testCaseContext.getStepResults()) {
+			if (isPromotedApproval(testCaseContext, stepResult.getCycleName())) {
+				logger.info(stepResult.toString());
 			}
-
 		}
 	}
 

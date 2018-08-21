@@ -1,11 +1,11 @@
 package com.ca.nbiapps.build.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import com.ca.nbiapps.build.model.StepResults.BuildTestStats;
 /**
  * 
  * @author Balaji N
@@ -16,7 +16,7 @@ public class TestCaseContext {
 	private JSONObject testCaseData;
 
 	// testcase results.
-	private BuildTestStats BuildTestStats;
+	private List<StepResults> stepResults = new ArrayList<>();
 	private String testCaseName;
 	private boolean testCaseSuccess;
 	
@@ -85,10 +85,11 @@ public class TestCaseContext {
 	public void setGitTaskSuccess(boolean gitTaskSuccess) {
 		this.gitTaskSuccess = gitTaskSuccess;
 	}
-	public BuildTestStats getBuildTestStats() {
-		return BuildTestStats;
+	public List<StepResults> getStepResults() {
+		return stepResults;
 	}
-	public void setBuildTestStats(BuildTestStats buildTestStats) {
-		BuildTestStats = buildTestStats;
+	public void setStepResults(List<StepResults> stepResults) {
+		this.stepResults = stepResults;
 	}
+	
 }

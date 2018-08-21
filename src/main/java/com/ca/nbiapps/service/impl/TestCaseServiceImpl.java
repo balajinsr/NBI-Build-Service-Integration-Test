@@ -5,7 +5,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.ca.nbiapps.build.model.BuildData;
+import com.ca.nbiapps.build.model.BuildTestStats;
+import com.ca.nbiapps.build.model.StepResults;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.core.compnents.BuildClientComponent;
 import com.ca.nbiapps.core.compnents.ConsolidationComponent;
@@ -55,12 +58,12 @@ public class TestCaseServiceImpl implements TestCaseService {
 			JSONObject buildTask = developerBuildTasks.getJSONObject(i);
 			String taskId = buildTask.getString("taskId");
 			
-			salesForceComponent.adjustTaskIdStatusForAcceptTheBuild(testCaseContext, taskId, i);
+			salesForceComponent.adjustTaskIdStatusForAcceptTheBuild(testCaseContext, taskId);
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
 				
-			gitComponent.processDeveloperGitTask(testCaseContext, taskId, buildTask, i);
+			gitComponent.processDeveloperGitTask(testCaseContext, taskId, buildTask);
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
@@ -103,7 +106,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 					boolean doTaskStatusChangeAuto = consolidation.getBoolean("doTaskStatusChangeAuto");
 					String taskIds = consolidationComponent.getConsolidatedTaskIds(tasks);
 					if (doTaskStatusChangeAuto) {						
-						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, taskIds, 0);
+						salesForceComponent.adjustTaskIdStatusToDoConsolidationPackage(testCaseContext, taskIds, "Preview");
 						if(!testCaseContext.isTestCaseSuccess()) {
 							return;
 						}
@@ -118,16 +121,21 @@ public class TestCaseServiceImpl implements TestCaseService {
 						consolidationComponent.verifyConsolidationPackage(testCaseContext, "Preview", releaseId, expectedFilesInPackage);
 					} else {
 						testCaseContext.setTestCaseSuccess(true);
+						if(!isArtifactsAvailable) {
+							gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE_DOWNLOAD.name(), "No package to download.");
+							gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE_ASSERT.name(), "No Consolidated package available.");
+						}
+						
+						if(isDeleteInstructionsAvailable) {
+							//TODO: manifest assert.
+						}
 					}
 					if(!testCaseContext.isTestCaseSuccess()) {
 						return;
 					}	
 				}
 			}
-		} else {
-
 		}
-
 	}
 
 	@Override

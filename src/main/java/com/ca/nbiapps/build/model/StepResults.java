@@ -1,23 +1,19 @@
 package com.ca.nbiapps.build.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Generated;
 
 /**
  * @author Balaji N
  *
  */
-public class StepResults {
+public class StepResults implements Cloneable {
+	
 	private String cycleName;
 	private String stepName;
 	private long stepDuration;
 	private String stepStatus = "Skipped";
 	private String reason;
 
-	public StepResults() {
-	}
 	@Generated("SparkTools")
 	private StepResults(Builder builder) {
 		this.cycleName = builder.cycleName;
@@ -27,6 +23,9 @@ public class StepResults {
 		this.reason = builder.reason;
 	}
 
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 	public String getStepName() {
 		return stepName;
 	}
@@ -64,45 +63,6 @@ public class StepResults {
 		return "StepResults [cycleName=" + cycleName + ", stepName=" + stepName + ", stepDuration=" + stepDuration + ", stepStatus=" + stepStatus + ", reason=" + reason + "]";
 	}
 	
-	public enum BuildTestStats {
-		BUILD_ADJUST_TASKID_STATUS(getBuildStepList("Preview")), BUILD_GIT_TASK(getBuildStepList("Preview")), BUILD_PULL_REQUEST(getBuildStepList("Preview")), BUILD_RESULT_FETCH(getBuildStepList("Preview")), BUILD_STATUS_CHECK(getBuildStepList("Preview")), BUILD_PACKAGE_DOWNLOAD(getBuildStepList("Preview")), BUILD_PACKAGE_ASSERT(getBuildStepList("Preview")), BUILD_DBENTRIES_ASSERT(getBuildStepList("Preview")),
-		CON_PACKAGE_TASKIDS_STATUS(getDeployPackStepResults()),CON_PACKAGE(getDeployPackStepResults()), CON_PACKAGE_DOWNLOAD(getDeployPackStepResults()), CON_PACKAGE_ASSERT(getDeployPackStepResults()), CON_MANIFEST_ASSERT(getDeployPackStepResults());
-
-		private BuildTestStats(List<StepResults> stepResults) {
-			for (StepResults step : stepResults) {
-				step.setStepName(this.name());
-			}
-			this.stepResults = stepResults;
-		}
-		
-		List<StepResults> stepResults;
-		
-		public List<StepResults> getStepResults() {
-			return stepResults;
-		}
-
-		public void setStepResults(List<StepResults> stepResults) {
-			this.stepResults = stepResults;
-		}
-
-		public static List<StepResults> getBuildStepList(String cycleName) {
-			List<StepResults> results = new ArrayList<>();
-			results.add(new Builder().withCycleName(cycleName).withStepStatus("Skipped").withReason("").build());
-			return results;
-		}
-		
-		public static StepResults getStepResults(String cycleName) {
-			return new Builder().withCycleName(cycleName).withStepStatus("Skipped").withReason("").build();
-		}
-		
-		public static List<StepResults> getDeployPackStepResults() {
-			List<StepResults> results = new ArrayList<>();
-			results.add(getStepResults("Preview"));
-			results.add(getStepResults("ValFac"));
-			results.add(getStepResults("Production"));
-			return results;
-		}
-	}
 
 	public String getCycleName() {
 		return cycleName;
@@ -120,6 +80,8 @@ public class StepResults {
 	public static Builder builder() {
 		return new Builder();
 	}
+
+
 
 	/**
 	 * Builder to build {@link StepResults}.
