@@ -40,7 +40,7 @@
         "DT-000051918"
       ],
       "doTaskStatusChangeAuto": true,
-      "isArtifactsAvailable": false,
+      "isArtifactsAvailable": true,
       "verifyManifest": false,
       "verifyDBEntries": false,
       "isDeleteInstructionsAvailable":true,
