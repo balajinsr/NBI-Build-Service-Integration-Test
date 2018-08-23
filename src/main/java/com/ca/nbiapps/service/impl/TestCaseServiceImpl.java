@@ -73,8 +73,14 @@ public class TestCaseServiceImpl implements TestCaseService {
 			BuildData buildData = buildClientComponent.waitForBuildCompleteAndGetBuildResults(testCaseContext, taskId, previousBuildNumber, i);
 			testCaseContext.getBuildData().add(buildData);
 			logger.info("BuildResults: :: "+buildData.toString());
+			
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
+			} else {
+				if(!buildData.isArtifactsAvailable() && "Build Failed".equals(buildData.getBuildStatus()) && buildData.getBuildFailedReason() != null && !"".equals(buildData.getBuildFailedReason())) {
+					logger.info("Build Assert true - Expected Build failed reason: "+buildData.getBuildFailedReason());
+					return;
+				}
 			}
 			
 			buildClientComponent.doBuildAssert(testCaseContext, taskId, buildData, buildTask);

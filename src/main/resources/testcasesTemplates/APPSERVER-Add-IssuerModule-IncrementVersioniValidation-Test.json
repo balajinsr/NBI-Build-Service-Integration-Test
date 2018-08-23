@@ -12,17 +12,17 @@
         {
           "filePath": "CommonComponents/samplemodule/pom.xml",
           "action": "add",
-          "md5Value": "10d269c1a38daf1464384af204a3d1f5"
+          "md5Value": "310776e0df962384f5c32531ace009fb"
         },
         {
           "filePath": "CommonComponents/pom.xml",
           "action": "add",
-          "md5Value": "58660236dd84fcccc045699db0152f74"
+          "md5Value": "f8ac278edb89858eb51683fc99d00a70"
         },
         {
           "filePath": "sonar-project.properties",
           "action": "update",
-          "md5Value": "a32c1db8627244b773a1f1a03f564423"
+          "md5Value": "4402f0525d065f0b17eee6539b6db7a4"
         },
         
         {
@@ -33,24 +33,15 @@
         
       ],
       "buildAssertValues": {
-        "buildStatus": "Build Success",
+        "buildStatus": "Build Failed",
         "expectedToVerify": {  
-          "isArtifactsAvailable" : true,
+          "isArtifactsAvailable" : false,
           "verifyDBEntries": false,
-          "artifactUploadStatus": "Upload Success",
-          "expectedFilesInPackage": [
-            {
-              "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-2.0.0.jar",
-              "md5Value": "d8356a21ac488a33aad15c2c8c0f766f"
-            }
-          ],
-          "expectedEntriesInDB": [
-            {
-              "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-2.0.0.jar",
-              "md5Value": "d8356a21ac488a33aad15c2c8c0f766f",
-              "action": "add"
-            }
-          ]
+          "expectedToVerify": 
+		  {
+			"artifactUploadStatus":"Upload Failed",
+			"failedReason":"version should be increased"
+		  }
         }
       }
     }
@@ -63,10 +54,10 @@
         "DT-000051918"
       ],
       "doTaskStatusChangeAuto": true,
-      "isArtifactsAvailable": true,
+      "isArtifactsAvailable": false,
       "verifyManifest": false,
       "verifyDBEntries": false,
-      "isDeleteInstructionsAvailable":false,
+      "isDeleteInstructionsAvailable":true,
       "expectedFilesInPackage": [
         {
           "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-1.0.0.jar",

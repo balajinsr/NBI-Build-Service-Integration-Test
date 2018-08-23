@@ -313,10 +313,7 @@ public class GitComponent extends CommonComponent {
 			boolean isCloneSuccess = cloneRepo(logger)?true:false;
 			if(isCloneSuccess && doGitLocalChanges(testCaseContext, buildTask)) {
 				RevCommit revCommit = doGitLocalCommit(logger, taskId);
-				
-				
 				gitPush(logger, false, "origin");
-				
 				testCaseContext.setTestCaseSuccess(true);
 				logger.info("Git changes and commit task completed.");
 				setStepSuccessValues(stepName, stepResults);
@@ -333,6 +330,7 @@ public class GitComponent extends CommonComponent {
 	}
 
 	public boolean doGitLocalChanges(TestCaseContext testCaseContext, JSONObject buildTask) throws Exception {
+		Logger logger = testCaseContext.getLogger();
 		String testCaseName = testCaseContext.getTestCaseName();
 		JSONArray commitFileList = buildTask.getJSONArray("commitFileList");
 		String srcBasePath = propertyComponents.getTestDataBasePath();
@@ -355,7 +353,9 @@ public class GitComponent extends CommonComponent {
 				Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
 				changeFileStatus = checkMd5(md5Value, to);
 				if (!changeFileStatus) {
-					break;
+					testCaseContext.setTestCaseSuccess(false);
+					logger.info("CheckSum of copied file ["+from.toString()+"]is incorrect");
+					return false;
 				}
 				gitAdd(fromPath);
 			}

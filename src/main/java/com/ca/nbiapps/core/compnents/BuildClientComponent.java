@@ -144,7 +144,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 				} else {
 					setStepSuccessValues(stepName, stepResults);
 				}
-
+				
 				stepResultsAssert = getStepResult("Preview");
 				String stepNameAssert = BuildTestStats.BUILD_PACKAGE_ASSERT.name();
 				verifyBuildPackage(testCaseContext, taskId, actualBuildData, expectedFilesInPackage, stepNameAssert, stepResultsAssert);
@@ -152,7 +152,6 @@ public class BuildClientComponent extends ArtifactoryComponent {
 			} else if (actualBuildData.isArtifactsAvailable() == expectedArtifactsAvailable) {
 				testCaseContext.setTestCaseSuccess(true);
 				setStepSuccessValues(stepName, stepResults);
-				
 			} else {
 				testCaseContext.setTestCaseSuccess(false);
 				setStepFailedValues(stepName, "Expected artifacts =" + expectedArtifactsAvailable + ", actually artifacts - " + actualBuildData.isArtifactsAvailable(),

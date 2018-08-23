@@ -18,12 +18,27 @@
     <classes>
       <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
     </classes>
-  </test>-->
+  </test>
   
    <test name="APPSERVER-AddIssuerModule-Test" preserve-order="true">
     <classes>
       <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
     </classes>
   </test>
-   
+  
+ 
+  
+  <test name="APPSERVER-Add-IssuerModule-IncrementVersioniValidation-Test" preserve-order="true">
+    <classes>
+      <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
+    </classes>
+  </test>
+  -->
+  
+   <test name="APPSERVER-Add-CommonModule-Test" preserve-order="true">
+    <classes>
+      <class name="com.ca.nbiapps.integration.test.BuildServiceTest"/>
+    </classes>
+  </test>
+  
 </suite>
