@@ -9,7 +9,6 @@
       <module>OTPSampleImplementation</module>
       <module>CommonComponents</module>
       <module>vpas-customized</module>
-      <module>NewIssuerModule</module>
    </modules>
    
    <repositories>

@@ -1,7 +1,7 @@
 {
   "developer-build-Tasks": [
     {
-      "taskId": "DT-000051918",
+      "taskId": "DT-000052580",
       "commitFileList": [
         {
           "filePath": "CommonComponents/samplemodule/src/main/java/com/ca/nbiapps/otpimpl/MainClass.java",
@@ -12,68 +12,38 @@
         {
           "filePath": "CommonComponents/samplemodule/pom.xml",
           "action": "add",
-          "md5Value": "310776e0df962384f5c32531ace009fb"
+          "md5Value": "10d269c1a38daf1464384af204a3d1f5"
         },
         {
           "filePath": "CommonComponents/pom.xml",
           "action": "add",
-          "md5Value": "f8ac278edb89858eb51683fc99d00a70"
+          "md5Value": "58660236dd84fcccc045699db0152f74"
         },
         {
           "filePath": "sonar-project.properties",
           "action": "update",
-          "md5Value": "4402f0525d065f0b17eee6539b6db7a4"
+          "md5Value": "a32c1db8627244b773a1f1a03f564423"
         },
         
         {
           "filePath": "pom.xml",
           "action": "update",
           "md5Value": "83d6aa681250d7cd485e8fba100b2d9f"
-        }
-        
+        } 
       ],
       "buildAssertValues": {
         "buildStatus": "Build Failed",
         "expectedToVerify": {  
           "isArtifactsAvailable" : false,
           "verifyDBEntries": false,
-          "expectedToVerify": 
-		  {
-			"artifactUploadStatus":"Upload Failed",
-			"failedReason":"version should be increased"
-		  }
+          "artifactUploadStatus": "Upload Failed",
+          "failedReason":"version should be increased"
         }
       }
     }
   ],
   
-  "doConsolidationCheck": true,
-  "consolidationAssertList": [
-    {
-      "taskIds": [
-        "DT-000051918"
-      ],
-      "doTaskStatusChangeAuto": true,
-      "isArtifactsAvailable": false,
-      "verifyManifest": false,
-      "verifyDBEntries": false,
-      "isDeleteInstructionsAvailable":true,
-      "expectedFilesInPackage": [
-        {
-          "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-1.0.0.jar",
-          "md5Value": "d8356a21ac488a33aad15c2c8c0f766f"
-        }
-      ],
-      
-      "expectedEntriesInManifestXML": [
-      {
-        "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-1.0.0.jar",
-        "md5Value": "d8356a21ac488a33aad15c2c8c0f766f",
-        "action": "add"
-      }
-      ]
-    }
-  ],
+  "doConsolidationCheck": false,
   "promoteToValFac":{
   	  "promotedApproval": false,
       "adjustTaskIdStatusAuto":true
