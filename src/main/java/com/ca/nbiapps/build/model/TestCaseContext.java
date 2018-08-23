@@ -13,83 +13,92 @@ import org.json.JSONObject;
  */
 public class TestCaseContext {
 	private Logger logger;
+	private String testCaseName;
 	private JSONObject testCaseData;
+	private boolean testCaseSuccess;
 
 	// testcase results.
 	private List<StepResults> stepResults = new ArrayList<>();
-	private String testCaseName;
-	private boolean testCaseSuccess;
 	
-	
-	// build data.
-	private Long buildNumber;
-	private boolean gitTaskSuccess;
+	// git data
 	private String baseGitCommitId;
 	private String headGitCommitId;
 	
+	// build data.
+	private List<BuildData> buildData = new ArrayList<>();
+	
 	// consolidate data.
-	private List<String> releaseIdList;
-	
-	public JSONObject getTestCaseData() {
-		return testCaseData;
-	}
-	public void setTestCaseData(JSONObject testCaseData) {
-		this.testCaseData = testCaseData;
-	}
-	public String getTestCaseName() {
-		return testCaseName;
-	}
-	public void setTestCaseName(String testCaseName) {
-		this.testCaseName = testCaseName;
-	}
-	public boolean isTestCaseSuccess() {
-		return testCaseSuccess;
-	}
-	public void setTestCaseSuccess(boolean testCaseSuccess) {
-		this.testCaseSuccess = testCaseSuccess;
-	}
-	
+	private List<ReleaseData> releaseDataList = new ArrayList<>();
+
 	public Logger getLogger() {
 		return logger;
 	}
+
 	public void setLogger(Logger logger) {
 		this.logger = logger;
 	}
-	public Long getBuildNumber() {
-		return buildNumber;
+
+	public String getTestCaseName() {
+		return testCaseName;
 	}
-	public void setBuildNumber(Long buildNumber) {
-		this.buildNumber = buildNumber;
+
+	public void setTestCaseName(String testCaseName) {
+		this.testCaseName = testCaseName;
 	}
-	public String getBaseGitCommitId() {
-		return baseGitCommitId;
+
+	public JSONObject getTestCaseData() {
+		return testCaseData;
 	}
-	public void setBaseGitCommitId(String baseGitCommitId) {
-		this.baseGitCommitId = baseGitCommitId;
+
+	public void setTestCaseData(JSONObject testCaseData) {
+		this.testCaseData = testCaseData;
 	}
-	public String getHeadGitCommitId() {
-		return headGitCommitId;
+
+	public boolean isTestCaseSuccess() {
+		return testCaseSuccess;
 	}
-	public void setHeadGitCommitId(String headGitCommitId) {
-		this.headGitCommitId = headGitCommitId;
+
+	public void setTestCaseSuccess(boolean testCaseSuccess) {
+		this.testCaseSuccess = testCaseSuccess;
 	}
-	public List<String> getReleaseIdList() {
-		return releaseIdList;
-	}
-	public void setReleaseIdList(List<String> releaseIdList) {
-		this.releaseIdList = releaseIdList;
-	}
-	public boolean isGitTaskSuccess() {
-		return gitTaskSuccess;
-	}
-	public void setGitTaskSuccess(boolean gitTaskSuccess) {
-		this.gitTaskSuccess = gitTaskSuccess;
-	}
+
 	public List<StepResults> getStepResults() {
 		return stepResults;
 	}
+
 	public void setStepResults(List<StepResults> stepResults) {
 		this.stepResults = stepResults;
 	}
-	
+
+	public String getBaseGitCommitId() {
+		return baseGitCommitId;
+	}
+
+	public void setBaseGitCommitId(String baseGitCommitId) {
+		this.baseGitCommitId = baseGitCommitId;
+	}
+
+	public String getHeadGitCommitId() {
+		return headGitCommitId;
+	}
+
+	public void setHeadGitCommitId(String headGitCommitId) {
+		this.headGitCommitId = headGitCommitId;
+	}
+
+	public List<BuildData> getBuildData() {
+		return buildData;
+	}
+
+	public void setBuildData(List<BuildData> buildData) {
+		this.buildData = buildData;
+	}
+
+	public List<ReleaseData> getReleaseDataList() {
+		return releaseDataList;
+	}
+
+	public void setReleaseDataList(List<ReleaseData> releaseDataList) {
+		this.releaseDataList = releaseDataList;
+	}
 }

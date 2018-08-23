@@ -110,7 +110,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 		}
 	}
 
-	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData, JSONObject buildTask, int buildStepIndex) throws Exception {
+	public void doBuildAssert(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData, JSONObject buildTask) throws Exception {
 		StepResults stepResults = getStepResult("Preview");
 		String stepName = BuildTestStats.BUILD_STATUS_CHECK.name();
 		Logger logger = testCaseContext.getLogger();
@@ -147,7 +147,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 
 				stepResultsAssert = getStepResult("Preview");
 				String stepNameAssert = BuildTestStats.BUILD_PACKAGE_ASSERT.name();
-				verifyBuildPackage(testCaseContext, taskId, actualBuildData.getBuildNumber(), expectedFilesInPackage, stepNameAssert, stepResultsAssert);
+				verifyBuildPackage(testCaseContext, taskId, actualBuildData, expectedFilesInPackage, stepNameAssert, stepResultsAssert);
 
 			} else if (actualBuildData.isArtifactsAvailable() == expectedArtifactsAvailable) {
 				testCaseContext.setTestCaseSuccess(true);
@@ -164,6 +164,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 		} finally {
 			testCaseContext.getStepResults().add(stepResults);
 			if(stepResultsAssert != null) {
+				
 				testCaseContext.getStepResults().add(stepResultsAssert);
 			}
 			
@@ -229,8 +230,9 @@ public class BuildClientComponent extends ArtifactoryComponent {
 		}
 	}
 
-	public void verifyBuildPackage(TestCaseContext testCaseContext, String taskId, Long buildNumber, JSONArray expectedFilesInPackage, String stepName, StepResults stepResults) throws Exception {
+	public void verifyBuildPackage(TestCaseContext testCaseContext, String taskId, BuildData actualBuildData, JSONArray expectedFilesInPackage, String stepName, StepResults stepResults) throws Exception {
 		Logger logger = testCaseContext.getLogger();
+		Long buildNumber = actualBuildData.getBuildNumber();
 		StepResults downLoadStepResult = null;
 		try {
 			String saveLocalDir = getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString() + File.separator + testCaseContext.getTestCaseName();
@@ -262,8 +264,8 @@ public class BuildClientComponent extends ArtifactoryComponent {
 	public void resetBuildDBEntries(TestCaseContext testCaseContext) throws Exception {
 		Logger logger = testCaseContext.getLogger();
 		try {
-			String url = propertyComponents.getBuildServiceBaseUrl() + "/test/resetDB?siloName=" + propertyComponents.getSiloName() + "buildNumber="
-					+ testCaseContext.getBuildNumber();
+			
+			String url = propertyComponents.getBuildServiceBaseUrl() + "/test/resetDB?siloName=" + propertyComponents.getSiloName() + "buildNumbers=&releaseIds=";
 			Type returnTypeOfObject = new TypeToken<ResponseModel>() {
 			}.getType();
 			ResponseModel responseModel = (ResponseModel) restServiceClient.getRestAPICall(logger, url, ResponseModel.class, returnTypeOfObject);

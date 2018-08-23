@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -16,7 +20,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ca.nbiapps.build.model.BuildTestStats;
+import com.ca.nbiapps.build.model.BuildData;
+import com.ca.nbiapps.build.model.BuildFiles;
 import com.ca.nbiapps.build.model.StepResults;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.common.logger.AsynchLogger;
@@ -117,17 +122,21 @@ public class CommonComponent {
 		File expectedFileInPackage = null;
 		Logger logger = testCaseContext.getLogger();
 		
+		
 		for (int i = 0; i < expectedFilesInPackage.length(); i++) {
 			JSONObject object = expectedFilesInPackage.getJSONObject(i);
-			expectedFileInPackage = new File(saveLocalDir + "/" + object.getString("filePath"));
+			String filePath = object.getString("filePath");
+			expectedFileInPackage = new File(saveLocalDir + "/" + filePath);
 			String expectedMd5Value = object.getString("md5Value");
 			
+			
+		
 			String actualMd5Value = null;
 			if(expectedFileInPackage.exists()) {
 				actualMd5Value = getMD5Sum(expectedFileInPackage);
 			}
-			
-			if (expectedFileInPackage.exists() && expectedMd5Value.equals(actualMd5Value)) {
+			boolean md5Validation = expectedMd5Value.equals(actualMd5Value)? true:filePath.contains(".jar")?true:false;
+			if (expectedFileInPackage.exists() && md5Validation) {
 				testCaseContext.setTestCaseSuccess(true);
 				setStepSuccessValues(stepName, stepResults);
 				logger.info("FilePath Assert true - [ExpectedFileInPackage = " + expectedFileInPackage+" - isExistInPackage - " + expectedFileInPackage.exists()+"]");
@@ -139,14 +148,24 @@ public class CommonComponent {
 					setStepFailedValues(stepName, message, stepResults);
 					return;
 				} 
-				if (!expectedMd5Value.equals(actualMd5Value)) {
-					setStepFailedValues(stepName, "Incorrect package . [ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]", stepResults);
+				// disabled md5 check for jar file.
+				if (!md5Validation) {
+					setStepFailedValues(stepName, "Incorrect md5 check . [ExpectedMd5Value = " + expectedMd5Value + " - actualMd5Value - " + actualMd5Value + "]", stepResults);
 				} 
 				return;
 			}
 		}
 	}
 	
+	public Map<String, BuildFiles> getExpectedBuildFilesMap(BuildData buildData) throws Exception {
+		Map<String, BuildFiles> buildFilesMap = new HashMap<>(); 
+		List<BuildFiles> buildFileList = buildData.getBuildFilesInPackage();
+		for(BuildFiles buildFile : buildFileList) {
+			buildFilesMap.put(buildFile.getFilePath(),buildFile);
+		}
+		return buildFilesMap;
+	}
+
 	public void setStepFailedValues(String stepName, String reason, StepResults stepResult) {
 		stepResult.setStepName(stepName);
 		stepResult.setReason(reason);

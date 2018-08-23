@@ -48,9 +48,6 @@ public class TestCaseServiceImpl implements TestCaseService {
 		String baseGitCommitSHAId = gitComponent.getLastestCommitId();
 		testCaseContext.setBaseGitCommitId(baseGitCommitSHAId);
 		testCaseContext.setHeadGitCommitId(baseGitCommitSHAId);
-		Long beforeTestCaseBuildNumber = buildClientComponent.getPreviousBuildNumber(testCaseContext.getLogger());
-		testCaseContext.setBuildNumber(beforeTestCaseBuildNumber);
-		
 		
 		// gitTaskCheck, buildProcessCheck, buildStatusCheck,
 		// buildconsolidationProcessCheck, buildConsolidationCheck
@@ -62,7 +59,6 @@ public class TestCaseServiceImpl implements TestCaseService {
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
-				
 			gitComponent.processDeveloperGitTask(testCaseContext, taskId, buildTask);
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
@@ -75,12 +71,13 @@ public class TestCaseServiceImpl implements TestCaseService {
 				return;
 			}
 			BuildData buildData = buildClientComponent.waitForBuildCompleteAndGetBuildResults(testCaseContext, taskId, previousBuildNumber, i);
+			testCaseContext.getBuildData().add(buildData);
 			logger.info("BuildResults: :: "+buildData.toString());
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
 			
-			buildClientComponent.doBuildAssert(testCaseContext, taskId, buildData, buildTask, i);
+			buildClientComponent.doBuildAssert(testCaseContext, taskId, buildData, buildTask);
 			if(!testCaseContext.isTestCaseSuccess()) {
 				return;
 			}
