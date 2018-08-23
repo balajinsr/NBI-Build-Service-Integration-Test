@@ -162,8 +162,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 			throw e;
 		} finally {
 			testCaseContext.getStepResults().add(stepResults);
-			if(stepResultsAssert != null) {
-				
+			if(stepResultsAssert != null) {		
 				testCaseContext.getStepResults().add(stepResultsAssert);
 			}
 			
