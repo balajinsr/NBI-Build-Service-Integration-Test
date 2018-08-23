@@ -69,14 +69,14 @@
       "isDeleteInstructionsAvailable":false,
       "expectedFilesInPackage": [
         {
-          "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-1.0.0.jar",
+          "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-2.0.0.jar",
           "md5Value": "d8356a21ac488a33aad15c2c8c0f766f"
         }
       ],
       
       "expectedEntriesInManifestXML": [
       {
-        "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-1.0.0.jar",
+        "filePath": "nbiservice-issuer-tools/nbiservice-samplemodule-2.0.0.jar",
         "md5Value": "d8356a21ac488a33aad15c2c8c0f766f",
         "action": "add"
       }
