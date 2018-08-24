@@ -43,7 +43,7 @@
       "isArtifactsAvailable": true,
       "verifyManifest": false,
       "verifyDBEntries": false,
-      "isDeleteInstructionsAvailable":true,
+      "isOnlyDeleteInstructionsAvailable":false,
       "expectedFilesInPackage": [
         {
           "filePath": "nbiservice-acspage/acspage/OTP_Auth/firstTest.html",

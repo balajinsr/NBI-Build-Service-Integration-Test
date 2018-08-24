@@ -67,7 +67,7 @@
       "isArtifactsAvailable": false,
       "verifyManifest": false,
       "verifyDBEntries": false,
-      "isDeleteInstructionsAvailable":true,
+      "isOnlyDeleteInstructionsAvailable":true,
       "expectedEntriesInManifestXML": [{
         "filePath": "acspage/OTP_Auth/firstTest.html",
         "md5Value": "",

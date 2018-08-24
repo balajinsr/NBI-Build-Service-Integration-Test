@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.ca.nbiapps.build.model.BuildData;
 import com.ca.nbiapps.build.model.BuildTestStats;
-import com.ca.nbiapps.build.model.StepResults;
 import com.ca.nbiapps.build.model.TestCaseContext;
 import com.ca.nbiapps.core.compnents.BuildClientComponent;
 import com.ca.nbiapps.core.compnents.ConsolidationComponent;
@@ -104,8 +103,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 				JSONArray tasks = consolidation.getJSONArray("taskIds");
 
 				boolean isArtifactsAvailable = consolidation.getBoolean("isArtifactsAvailable");
-				boolean isDeleteInstructionsAvailable = consolidation.getBoolean("isDeleteInstructionsAvailable");
-				if (isArtifactsAvailable || isDeleteInstructionsAvailable) {
+				boolean isOnlyDeleteInstructionsAvailable = consolidation.getBoolean("isOnlyDeleteInstructionsAvailable");
+				if (isArtifactsAvailable || isOnlyDeleteInstructionsAvailable) {
 					boolean doTaskStatusChangeAuto = consolidation.getBoolean("doTaskStatusChangeAuto");
 					String taskIds = consolidationComponent.getConsolidatedTaskIds(tasks);
 					if (doTaskStatusChangeAuto) {						
@@ -119,25 +118,31 @@ public class TestCaseServiceImpl implements TestCaseService {
 						return;
 					}
 					
-					if(!isDeleteInstructionsAvailable) {
+					if(isArtifactsAvailable) {
 						JSONArray expectedFilesInPackage = consolidation.getJSONArray("expectedFilesInPackage");
 						consolidationComponent.verifyConsolidationPackage(testCaseContext, "Preview", releaseId, expectedFilesInPackage);
-					} else {
+					}
+					
+					if(isOnlyDeleteInstructionsAvailable) {
 						testCaseContext.setTestCaseSuccess(true);
 						if(!isArtifactsAvailable) {
 							gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE_DOWNLOAD.name(), "No package to download.");
 							gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE_ASSERT.name(), "No Consolidated package available.");
 						}
 						
-						if(isDeleteInstructionsAvailable) {
+						if(isOnlyDeleteInstructionsAvailable) {
 							//TODO: manifest assert.
-						}
-					}
+						}	
+					} 
 					if(!testCaseContext.isTestCaseSuccess()) {
 						return;
 					}	
 				}
 			}
+		} else {
+			gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE.name(), "Not required to do consolidated package..");
+			gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE_DOWNLOAD.name(), "No package to download.");
+			gitComponent.setSkippedStepResults(testCaseContext, "Preview", BuildTestStats.CON_PACKAGE_ASSERT.name(), "No consolidated package available to do assert.");
 		}
 	}
 

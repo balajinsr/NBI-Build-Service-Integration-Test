@@ -87,7 +87,7 @@ public class ConsolidationComponent extends ArtifactoryComponent {
 			logger.info("Consolidated Artifacts URL: " + artifactsUri);
 			boolean isSuccessDownload = downloadPackage(logger, cycleName, saveLocalDir, artifactsUri);
 			downLoadStepResult = getStepResult(cycleName);
-			String downLoadStepName = BuildTestStats.BUILD_PACKAGE_DOWNLOAD.name();
+			String downLoadStepName = BuildTestStats.CON_PACKAGE_DOWNLOAD.name();
 			if (isSuccessDownload) {
 				assertPackageFiles(testCaseContext, saveLocalDir, expectedFilesInPackage, stepName, stepResults);
 				setStepSuccessValues(downLoadStepName, downLoadStepResult);

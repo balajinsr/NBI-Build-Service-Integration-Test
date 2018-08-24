@@ -62,7 +62,7 @@
       "isArtifactsAvailable": true,
       "verifyManifest": false,
       "verifyDBEntries": false,
-      "isDeleteInstructionsAvailable":true,
+      "isOnlyDeleteInstructionsAvailable":false,
       "expectedFilesInPackage": [
         {
           "filePath": "nbiservice-issuer-tools/nbiservice-newIssuerModule-1.0.0.jar",
