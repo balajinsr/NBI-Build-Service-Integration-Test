@@ -45,7 +45,7 @@ public class ArtifactoryComponent extends CommonComponent {
                 .build();
     }
 	
-	
+	@Deprecated
 	public String getArtifactName(String uri) {
 		if(uri == null || StringUtils.isEmpty(uri)) {
 			throw new IllegalArgumentException("Arguments passed to get artifactName is not valid");
@@ -53,10 +53,9 @@ public class ArtifactoryComponent extends CommonComponent {
 		Path path = Paths.get(uri);
 		if(path.getFileName() != null) {
 			
-			if(path.getFileName().toString().contains("-appserver")) {
-				return "";
+			if(path.getFileName().toString().contains("-acspage.zip")) {
+				return path.getFileName().toString().replace(".zip", "");
 			}
-			return path.getFileName().toString().replace(".zip", "");
 		}
 		return "";
 	}
@@ -77,7 +76,7 @@ public class ArtifactoryComponent extends CommonComponent {
 		for (Item item : childrens) {
 			file = downloadFile(artifactory, folder.getRepo(), folder.getPath() + item.getUri(), saveLocalDir + item.getUri());
 			if (item.getUri().contains(".zip")) {
-				boolean isUnzipSuccess = unzip(file.toString(), saveLocalDir +"/"+getArtifactName(item.getUri()));
+				boolean isUnzipSuccess = unzip(file.toString(), saveLocalDir +"/");
 				if (isUnzipSuccess)
 					file.delete();
 			}

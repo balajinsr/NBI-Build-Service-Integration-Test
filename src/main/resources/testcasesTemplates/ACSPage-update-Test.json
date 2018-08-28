@@ -17,7 +17,7 @@
           "artifactUploadStatus": "Upload Success",
           "expectedFilesInPackage": [
             {
-              "filePath": "nbiservice-acspage/acspage/OTP_Auth/hrtnbase.htm",
+              "filePath": "acspage/OTP_Auth/hrtnbase.htm",
               "md5Value": "af0648b6936534412da3426bd1c1fd05"
             }
           ],
@@ -46,7 +46,7 @@
       "isOnlyDeleteInstructionsAvailable":false,
       "expectedFilesInPackage": [
         {
-          "filePath": "nbiservice-acspage/acspage/OTP_Auth/hrtnbase.htm",
+          "filePath": "acspage/OTP_Auth/hrtnbase.htm",
           "md5Value": "af0648b6936534412da3426bd1c1fd05"
         }
       ],

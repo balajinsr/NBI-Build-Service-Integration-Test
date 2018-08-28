@@ -33,4 +33,8 @@ public class BuildFiles {
 		this.action = action;
 	}
 
+	@Override
+	public String toString() {
+		return "BuildFiles [filePath=" + filePath + ", md5Value=" + md5Value + ", action=" + action + "]";
+	}
 }

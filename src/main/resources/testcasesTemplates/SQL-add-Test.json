@@ -1,0 +1,217 @@
+{
+  "developer-build-Tasks": [
+    {
+      "taskId": "DT-000052659",
+      "commitFileList": [
+        {
+          "filePath": "SILO/sql/preview/DT-000052659_1_1_ddl.sql",
+          "action": "add",
+          "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+        },
+        {
+          "filePath": "SILO/sql/preview/DT-000052659_1_1_rollback_ddl.sql",
+          "action": "add",
+          "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+        },
+        {
+          "filePath": "SILO/sql/preview/DT-000052659_2_1_ddl.sql",
+          "action": "add",
+          "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+        },
+         {
+          "filePath": "SILO/sql/preview/DT-000052659_2_1_rollback_ddl.sql",
+          "action": "add",
+          "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+        }
+      ],
+      "buildAssertValues": {
+        "buildStatus": "Build Success",
+        "expectedToVerify": {  
+          "isArtifactsAvailable" : true,
+          "verifyDBEntries": false,
+          "artifactUploadStatus": "Upload Success",
+          "expectedFilesInPackage": [
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_1_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_1_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_2_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_2_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_1_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_1_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_2_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_2_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_1_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_1_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_2_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_2_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+            }
+          ],
+          "expectedEntriesInDB": [
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_1_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_1_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_2_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052659_2_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_1_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_1_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_2_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052659_2_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_1_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_1_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_2_1_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052659_2_1_rollback_ddl.sql",
+              "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+              "action":"add"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  
+  "doConsolidationCheck": true,
+  "consolidationAssertList": [
+   {
+      "taskIds": [
+        "DT-000052659"
+      ],
+      "doTaskStatusChangeAuto": true,
+      "isArtifactsAvailable": true,
+      "verifyManifest": false,
+      "verifyDBEntries": false,
+      "isOnlyDeleteInstructionsAvailable":false,
+      "expectedFilesInPackage": [
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_1_1_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_1_1_rollback_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_2_1_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_2_1_rollback_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96"
+	    }
+	  ],
+      
+       "expectedEntriesInManifestXML": [
+       {
+	      "filePath": "nbiservice-sql/DT-000052659_1_1_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_1_1_rollback_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_2_1_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_2_1_rollback_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    }
+      ]
+    }
+  ],
+  "promoteToValFac":{
+  	  "promotedApproval": false,
+      "adjustTaskIdStatusAuto":true
+   },
+   "promoteToProduction":{
+      "promotedApproval": true,
+      "adjustTaskIdStatusAuto":true
+   },
+  "rebase-origin": true,
+  "resetDB": true,
+  "rebase-upstream": true
+}
