@@ -1,0 +1,386 @@
+{
+  "developer-build-Tasks": [
+    {
+      "taskId": "DT-000052661",
+      "commitFileList": [
+        {
+          "filePath": "SILO/sql/preview/DT-000052661_1_1_dml.sql",
+          "action": "add",
+          "md5Value": "0e8eb99601abbd7133b5c56758167897"
+        },
+        {
+          "filePath": "SILO/sql/preview/DT-000052661_1_1_rollback_dml.sql",
+          "action": "add",
+          "md5Value": "b077d34130e88e6eef03f67160a97510"
+        },
+        {
+          "filePath": "SILO/sql/preview/DT-000052661_1_2_dml.sql",
+          "action": "add",
+          "md5Value": "b077d34130e88e6eef03f67160a97510"
+        },
+         {
+          "filePath": "SILO/sql/preview/DT-000052661_1_2_rollback_dml.sql",
+          "action": "add",
+          "md5Value": "b077d34130e88e6eef03f67160a97510"
+        },
+        
+        {
+          "filePath": "SILO/upload-bankdata/preview/DT-000052661_1_1_banks.csv",
+          "action": "add",
+          "md5Value": "3420811669a1cdf07ef5998f79f4c32e"
+        },
+        {
+          "filePath": "SILO/upload-bankdata/preview/DT-000052661_1_1_brands.csv",
+          "action": "add",
+          "md5Value": "5ac489540f77dc25ed246ece7e69da02"
+        },
+        {
+          "filePath": "SILO/upload-bankdata/preview/DT-000052661_1_1_updatebanks.csv",
+          "action": "add",
+          "md5Value": "4829c17ed1e4eef1420bf1313cf23139"
+        },
+         {
+          "filePath": "SILO/callout-config/preview/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+          "action": "add",
+          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29"
+        }
+      ],
+      "buildAssertValues": {
+        "buildStatus": "Build Success",
+        "expectedToVerify": {  
+          "isArtifactsAvailable" : true,
+          "verifyDBEntries": false,
+          "artifactUploadStatus": "Upload Success",
+          "expectedFilesInPackage": [
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+	          "filePath": "nbiservice-bankdata-preview/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-preview/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-preview/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-valfac/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-valfac/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02"
+	        },
+	        {
+	          "filePath": "nbiservice-upload-bankdata-valfac/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-production/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-production/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-production/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139"
+	        },
+	        {
+	          "filePath": "nbiservice-calloutconfig-preview/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29"
+	        },
+	        
+	        {
+	          "filePath": "nbiservice-calloutconfig-valfac/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29"
+	        },
+	        
+	        {
+	          "filePath": "nbiservice-calloutconfig-production/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29"
+	        }
+          ],
+          "expectedEntriesInDB": [
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-preview/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-valfac/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+              "filePath": "nbiservice-sql-production/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510",
+              "action" : "add"
+            },
+            {
+	          "filePath": "nbiservice-bankdata-preview/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-preview/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-preview/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-valfac/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-valfac/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-valfac/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-production/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-production/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata-production/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139",
+	           "action" : "add"
+	        },
+	        {
+	          "filePath": "nbiservice-calloutconfig-preview/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29",
+	           "action" : "add"
+	        },
+	        
+	        {
+	          "filePath": "nbiservice-calloutconfig-valfac/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29",
+	           "action" : "add"
+	        },
+	        
+	        {
+	          "filePath": "nbiservice-calloutconfig-production/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29",
+	           "action" : "add"
+	        }
+          ]
+        }
+      }
+    }
+  ],
+  
+  "doConsolidationCheck": true,
+  "consolidationAssertList": [
+   {
+      "taskIds": [
+        "DT-000052661"
+      ],
+      "doTaskStatusChangeAuto": true,
+      "isArtifactsAvailable": true,
+      "verifyManifest": false,
+      "verifyDBEntries": false,
+      "isOnlyDeleteInstructionsAvailable":false,
+      "expectedFilesInPackage": [
+	     {
+              "filePath": "nbiservice-sql/DT-000052661_1_1_dml.sql",
+              "md5Value": "0e8eb99601abbd7133b5c56758167897"
+            },
+            {
+              "filePath": "nbiservice-sql/DT-000052661_1_1_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql/DT-000052661_1_2_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+              "filePath": "nbiservice-sql/DT-000052661_1_2_rollback_dml.sql",
+              "md5Value": "b077d34130e88e6eef03f67160a97510"
+            },
+            {
+	          "filePath": "nbiservice-bankdata/DT-000052661_1_1_banks.csv",
+	          "md5Value": "3420811669a1cdf07ef5998f79f4c32e"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata/DT-000052661_1_1_brands.csv",	       
+	          "md5Value": "5ac489540f77dc25ed246ece7e69da02"
+	        },
+	        {
+	          "filePath": "nbiservice-bankdata/DT-000052661_1_1_updatebanks.csv",       
+	          "md5Value": "4829c17ed1e4eef1420bf1313cf23139"
+	        },
+	        {
+	          "filePath": "nbiservice-calloutconfig/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+	          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29"
+	        }
+	  ],
+      
+       "expectedEntriesInManifestXML": [
+       {
+	      "filePath": "nbiservice-sql/DT-000052659_1_1_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_1_1_rollback_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_2_1_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+	      "filePath": "nbiservice-sql/DT-000052659_2_1_rollback_ddl.sql",
+	      "md5Value": "01d783fb73ad496cf5b18001f2268c96",
+	      "action": "add"
+	    },
+	    {
+          "filePath": "nbiservice-bankdata/DT-000052661_1_1_banks.csv",
+          "md5Value": "3420811669a1cdf07ef5998f79f4c32e",
+      	  "action": "add"
+        },
+        {
+          "filePath": "nbiservice-bankdata/DT-000052661_1_1_brands.csv",	       
+          "md5Value": "5ac489540f77dc25ed246ece7e69da02",
+          "action": "add"
+        },
+        {
+          "filePath": "nbiservice-bankdata/DT-000052661_1_1_updatebanks.csv",       
+          "md5Value": "4829c17ed1e4eef1420bf1313cf23139",
+          "action": "add"
+        },
+        {
+          "filePath": "nbiservice-calloutconfig/DT-000052661_issuer2_1_1_CalloutConfig.xml",
+          "md5Value": "2bc3a7297f8cf6402d4d57e95b701d29",
+          "action": "add"
+        }
+      ]
+    }
+  ],
+  "promoteToValFac":{
+  	  "promotedApproval": false,
+      "adjustTaskIdStatusAuto":true
+   },
+   "promoteToProduction":{
+      "promotedApproval": true,
+      "adjustTaskIdStatusAuto":true
+   },
+  "rebase-origin": true,
+  "resetDB": true,
+  "rebase-upstream": true
+}

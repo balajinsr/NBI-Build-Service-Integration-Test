@@ -40,6 +40,7 @@ public class BuildServiceTest extends BaseTest {
 			testCaseService.process(testCaseContext);
 			org.testng.Assert.assertTrue(testCaseContext.isTestCaseSuccess());
 		} catch (Exception e) {
+			testCaseContext.setTestCaseSuccess(false);
 			handleException(logger, e);
 			org.testng.Assert.assertTrue(false);
 		} finally {

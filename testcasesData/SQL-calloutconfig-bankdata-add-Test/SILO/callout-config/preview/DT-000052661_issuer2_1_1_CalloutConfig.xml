@@ -1,0 +1,130 @@
+<Callouts xmlns="http://arcot.com/calloutconfig">
+  <IssuerName>Test issuer tool 02</IssuerName>
+  <BnkDirName>testbank_tool_2</BnkDirName>
+  <CalloutConfigurations>
+    <CalloutConfiguration>
+      <CalloutConfigurationId>OTP_MULTI_CHANNEL</CalloutConfigurationId>
+      <ConnectionTimeOut>45000</ConnectionTimeOut>
+      <ResponseTimeOut>45000</ResponseTimeOut>
+      <DestinationUrl>http://172.16.1.5:8080/vpas/ACS/SecureACSServlet</DestinationUrl>
+      <MaxConnectionTries>3</MaxConnectionTries>
+      <CalloutAuthMethod>0</CalloutAuthMethod>
+      <parameters>
+        <parameter>
+          <name>LogicHandler</name>
+          <value>com.ca.nbiapps.businesslayer.handlers.OTPBusinessLogicHandler</value>
+        </parameter>
+        <parameter>
+          <name>LogFilePath</name>
+          <value>otpmultichannel</value>
+        </parameter>
+        <parameter>
+          <name>SEND_OTP_TO</name>
+          <value>MOBILE_AND_EMAIL</value>
+        </parameter>
+        <parameter>
+          <name>LANDING</name>
+          <value>false</value>
+        </parameter>
+        <parameter>
+          <name>amds_user</name>
+          <value>messenger@default.com</value>
+        </parameter>
+        <parameter>
+          <name>amds_pass</name>
+          <value>Dost1234</value>
+        </parameter>
+        <parameter>
+          <name>amds_provider</name>
+          <value>Sybase365</value>
+        </parameter>
+        <parameter>
+          <name>email_subject</name>
+          <value>Your One-Time Passcode</value>
+        </parameter>
+        <parameter>
+          <name>amds_email_from</name>
+          <value>donotreply@ca.com</value>
+        </parameter>
+        <parameter>
+          <name>amds_email_from_name</name>
+          <value>Member Bank</value>
+        </parameter>
+        <parameter>
+          <name>amds_url</name>
+          <value>https://amdspreview.arcot.com</value>
+        </parameter>
+        <parameter>
+          <name>SMS_TEXT</name>
+          <value>One-Time Passcode is ${otp} for the transaction of ${transaction_currency} ${transaction_amt} at ${merchant_name} on your card ending ${last4digits}.</value>
+        </parameter>
+        <parameter>
+          <name>AMDS_FROM</name>
+          <value>918553890826</value>
+        </parameter>
+        <parameter>
+          <name>EMAIL_TEXT</name>
+          <value>OTP_Email.html</value>
+        </parameter>
+        <parameter>
+          <name>LOGLEVEL</name>
+          <value>TRACE</value>
+        </parameter>
+        <parameter>
+          <name>RA_ALLOW</name>
+          <value>SEND_Y</value>
+        </parameter>
+        <parameter>
+          <name>RA_DENY</name>
+          <value>DENY</value>
+        </parameter>
+        <parameter>
+          <name>UPLOAD_CONTENT_LIST</name>
+          <value>3,4,5,7,8</value>
+        </parameter>
+        <parameter>
+          <name>AUTO_SUBMIT_INTERVAL</name>
+          <value>300000</value>
+        </parameter>
+      </parameters>
+    </CalloutConfiguration>
+  </CalloutConfigurations>
+  <IssuerCallouts>
+    <IssuerCallout>
+      <CallOutConfigurationId>OTP_MULTI_CHANNEL</CallOutConfigurationId>
+      <CallOutPath>/home/preview5/opt/arcot/lib/libgenericacscallout.so</CallOutPath>
+      <CalloutType>ACS - Verify Password Callout</CalloutType>
+      <CardRange>Range Group Conf</CardRange>
+      <RangeGroup>All Ranges</RangeGroup>
+      <status>Forced</status>
+      <CalloutAuthMethod>101</CalloutAuthMethod>
+    </IssuerCallout>
+    <IssuerCallout>
+      <CallOutConfigurationId>OTP_MULTI_CHANNEL</CallOutConfigurationId>
+      <CallOutPath>/home/preview5/opt/arcot/lib/libgenericacscallout.so</CallOutPath>
+      <CalloutType>ACS - Verify Issuer Answer Callout</CalloutType>
+      <CardRange>Range Group Conf</CardRange>
+      <RangeGroup>All Ranges</RangeGroup>
+      <status>Enabled</status>
+      <CalloutAuthMethod>101</CalloutAuthMethod>
+    </IssuerCallout>
+    <IssuerCallout>
+      <CallOutConfigurationId>OTP_MULTI_CHANNEL</CallOutConfigurationId>
+      <CallOutPath>/home/preview5/opt/arcot/lib/libgenericacscallout.so</CallOutPath>
+      <CalloutType>ACS - PAReq Callout</CalloutType>
+      <CardRange>Range Group Conf</CardRange>
+      <RangeGroup>All Ranges</RangeGroup>
+      <status>Enabled</status>
+      <CalloutAuthMethod>101</CalloutAuthMethod>
+    </IssuerCallout>
+    <IssuerCallout>
+      <CallOutConfigurationId>OTP_MULTI_CHANNEL</CallOutConfigurationId>
+      <CallOutPath>/home/preview5/opt/arcot/lib/libgenericacscallout.so</CallOutPath>
+      <CalloutType>ACS - PrePARes Generation Callout</CalloutType>
+      <CardRange>Range Group Conf</CardRange>
+      <RangeGroup>All Ranges</RangeGroup>
+      <status>Enabled</status>
+      <CalloutAuthMethod>101</CalloutAuthMethod>
+    </IssuerCallout>
+  </IssuerCallouts>
+</Callouts>

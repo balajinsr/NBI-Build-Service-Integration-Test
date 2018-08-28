@@ -1,0 +1,4 @@
+jar md5 values validation.
+manifest assert.
+db entries assert.
+more test scenarios add.
