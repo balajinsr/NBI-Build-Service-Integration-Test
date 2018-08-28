@@ -70,6 +70,7 @@ public class ArtifactoryComponent extends CommonComponent {
 				propertyComponents.getArtifactoryBaseUrl());
 		
 		Folder folder = artifactory.repository(propertyComponents.getMavenRepoName()).folder(artifactsUri).info();
+		logger.info("Artifacts URL: "+folder.getUri());
 		List<Item> childrens = folder.getChildren();
 
 		File file = null;

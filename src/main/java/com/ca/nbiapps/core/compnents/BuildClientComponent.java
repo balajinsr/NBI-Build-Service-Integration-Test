@@ -236,8 +236,7 @@ public class BuildClientComponent extends ArtifactoryComponent {
 			String saveLocalDir = getPathByOSSpecific(propertyComponents.getArtifactoryDownloadLocalDir()).toString() + File.separator + testCaseContext.getTestCaseName();
 			saveLocalDir = saveLocalDir + "/" + taskId + "_" + buildNumber;
 
-			String artifactsUri = "/" + propertyComponents.getSiloName() + "/" + taskId + "/" + buildNumber;
-			logger.info("Build artifacts URL: " + artifactsUri);
+			String artifactsUri = "/" + propertyComponents.getSiloName() + "/" + taskId + "/" + buildNumber;			
 			boolean isSuccessDownload = downloadPackage(logger, "Preview", saveLocalDir, artifactsUri);
 			downLoadStepResult = getStepResult("Preview");
 			String downLoadStepName = BuildTestStats.BUILD_PACKAGE_DOWNLOAD.name();
